@@ -1,4 +1,4 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#14245a"><link rel="icon" href="logo.png"><link rel="apple-touch-icon" href="logo.png"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>One2One English Prep</title>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#14245a"><link rel="icon" href="logo.png"><link rel="apple-touch-icon" href="logo.png"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Study for My Exam</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Lexend:wght@400;500;600&display=swap">
@@ -116,7 +116,8 @@ input.ans{width:100%;box-sizing:border-box;font:inherit;font-size:18px;padding:1
 .review div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
 .login{min-height:80vh;display:grid;align-content:center;gap:18px;text-align:center}
 .login img{width:180px;height:180px;margin:0 auto;border-radius:50%;background:#fff;box-shadow:0 6px 24px color-mix(in srgb,var(--navy) 25%,transparent)}
-.login h1{font-size:26px;color:var(--navy)}
+.login h1{font-size:28px;color:var(--navy)}
+.byline{margin:-12px 0 0;font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
 .wkpill{display:inline-block;background:var(--badbg);color:var(--bad);border-radius:99px;padding:2px 10px;margin:2px;font-size:13px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -402,6 +403,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const LESSONS=UNITS; UNITS.forEach(u=>u.items.forEach((it,i)=>it.key=u.id+"#"+i));
 const ITEM=Object.fromEntries(UNITS.flatMap(u=>u.items.map(it=>[it.key,{...it,lesson:u.id}])));
+const EXAM_N=60;
 const TYPE={mc:"Elegí la opción correcta",fill:"Completá el espacio",order:"Ordená las palabras",listen:"Escuchá",speak:"Hablá",translate:"Traducí al inglés"};
 
 /* ---------- normalización y corrección ---------- */
@@ -467,7 +469,7 @@ function merge(a,b){ if(!a)return b; if(!b)return a; const o=blank(a.name||b.nam
   for(const k of new Set([...Object.keys(a.done||{}),...Object.keys(b.done||{})]))if(LESSONS.some(l=>l.id===k))o.done[k]=Math.max(a.done?.[k]||0,b.done?.[k]||0);
   o.missed=[...new Set([...(a.missed||[]),...(b.missed||[])])].filter(k=>ITEM[k]);
   o.exam={best:Math.max(a.exam?.best??-1,b.exam?.best??-1),last:(a.updatedAt||0)>(b.updatedAt||0)?a.exam?.last:b.exam?.last,tries:Math.max(a.exam?.tries||0,b.exam?.tries||0)}; if(o.exam.best<0)o.exam.best=null;
-  o.updatedAt=Math.max(a.updatedAt||0,b.updatedAt||0); return o }
+  o.examSeen=a.examSeen||b.examSeen||[]; o.updatedAt=Math.max(a.updatedAt||0,b.updatedAt||0); return o }
 function save(){ P.updatedAt=Date.now(); ls.set("o2o:p:"+me,P) }
 function login(name){ name=name.trim().replace(/\s+/g," ").slice(0,30); if(!name)return; me=slug(name); P=merge(ls.get("o2o:p:"+me),blank(name)); P.name=name; ls.set("o2o:me",me); ls.set("o2o:last",name); save();
   view="home"; render() }
@@ -481,7 +483,7 @@ function header(){ const done=Object.keys(P.done).length;
   <div class="stats"><span class="chip" title="Experiencia">⚡ ${P.xp} XP</span><span class="chip" title="Lecciones completas">✔ ${done}/${LESSONS.length}</span></div></header>` }
 function go(v){view=v;render()}
 function vLogin(){
-  app.innerHTML=`<div class="login"><img src="${LOGO}" alt="One2One — You make it real"><h1>English Exam Prep</h1>
+  app.innerHTML=`<div class="login"><img src="${LOGO}" alt="One2One — You make it real"><h1>Study for My Exam</h1><p class="byline">by Celso Mello</p>
   <p class="muted">ID 1 · Unidades 1.1 a 3.5 · escrito, oral y opción múltiple</p>
   <form id="lf" style="display:grid;gap:12px"><label for="nm" class="muted small">Escribí tu nombre para guardar tu progreso</label>
   <input class="ans" id="nm" autocomplete="given-name" placeholder="Tu nombre" maxlength="30" value="${esc(ls.get("o2o:last")||"")}"><button class="btn red">Empezar</button></form></div>`;
@@ -494,10 +496,10 @@ function vHome(){
   app.innerHTML=header()+`<div class="home"><aside class="side">
   <section class="hero"><div class="stripes" aria-hidden="true"></div><span class="eyebrow">Plan de estudio · examen del miércoles</span><h2>${next?done+" de "+LESSONS.length+" lecciones":"¡Todas las lecciones listas!"}</h2>
   <div class="bar"><i style="width:${done/LESSONS.length*100}%"></i></div>
-  <p class="small">${next?`Siguiente: <b>${next.id} · ${esc(next.title)}</b><br>Hacé las lecciones en orden y cerrá con el simulacro.`:"Hacé el simulacro de 100 preguntas y repasá tus errores."}</p>
+  <p class="small">${next?`Siguiente: <b>${next.id} · ${esc(next.title)}</b><br>Hacé las lecciones en orden y cerrá con el simulacro.`:`Hacé el simulacro de ${EXAM_N} preguntas y repasá tus errores.`}</p>
   <button class="btn red" onclick="${next?`openTip('${next.id}')`:"startExam()"}">${next?"Continuar":"Hacer el simulacro"}</button></section>
   <section class="score"><div><span class="eyebrow">Puntuación final</span><b class="sc">${P.exam.best!=null?P.exam.best+"%":"—"}</b><span class="muted small">${P.exam.best!=null?"mejor nota del simulacro":"hacé el simulacro para tener tu nota"}</span></div><div><span class="eyebrow">Experiencia</span><b class="sc">${P.xp}</b><span class="muted small">XP · ${done}/${LESSONS.length} lecciones</span></div></section>
-  <button class="card" onclick="startExam()"><span class="cnum">100</span><span class="txt"><b>Simulacro de examen</b><span class="muted small">${ls.get("o2o:exam:"+me)?`En curso: ${ls.get("o2o:exam:"+me).idx}/100 · tocá para continuar`:P.exam.best!=null?`Mejor nota: ${P.exam.best}% · ${P.exam.tries} ${P.exam.tries===1?"intento":"intentos"}`:"Preguntas de todas las unidades, nota al final"}</span></span></button>
+  <button class="card" onclick="startExam()"><span class="cnum">${EXAM_N}</span><span class="txt"><b>Simulacro de examen</b><span class="muted small">${ls.get("o2o:exam:"+me)?`En curso: ${ls.get("o2o:exam:"+me).idx}/${ls.get("o2o:exam:"+me).queue.length} · tocá para continuar`:P.exam.best!=null?`Mejor nota: ${P.exam.best}% · ${P.exam.tries} ${P.exam.tries===1?"intento":"intentos"}`:"Preguntas de todas las unidades, nota al final"}</span></span></button>
   <button class="card" ${P.missed.length?"":"disabled"} onclick="startReview()"><span class="cnum">↺</span><span class="txt"><b>Repasar mis errores</b><span class="muted small">${P.missed.length?P.missed.length+" ejercicios pendientes":"Todavía no tenés errores guardados"}</span></span></button>
   <p class="muted small">Tu progreso se guarda en este dispositivo. <button class="lnk" onclick="logout()">Cambiar de usuario</button></p>
   </aside><div class="path">${path}</div></div>` }
@@ -512,10 +514,13 @@ function startLesson(){ const l=S.lesson; begin("lesson",shuffle(l.items).map(i=
 function startReview(){ if(!P.missed.length)return go("home"); begin("review",shuffle(P.missed).slice(0,15)) }
 function startExam(){ const saved=ls.get("o2o:exam:"+me);
   if(saved&&saved.idx<saved.queue.length&&saved.queue.every(k=>ITEM[k])){ S={...saved,mode:"exam"}; S.hearts=null; view="q"; render(); return }
-  // 100 preguntas: reparto por lección, con al menos 1 de hablar por lección
-  const perL=Math.floor(100/LESSONS.length); let q=[];
-  for(const l of LESSONS){ const sp=shuffle(l.items.filter(i=>i.t==="speak")), rest=shuffle(l.items.filter(i=>i.t!=="speak")); q.push(sp[0].key,...rest.slice(0,perL-1).map(i=>i.key)) }
-  const left=shuffle(LESSONS.flatMap(l=>l.items).filter(i=>!q.includes(i.key))); q.push(...left.slice(0,100-q.length).map(i=>i.key));
+  // EXAM_N preguntas: reparto parejo por lección, 1 de hablar por lección, priorizando las que no salieron en simulacros anteriores
+  const seen=new Set(P.examSeen||[]), fresh=a=>[...shuffle(a.filter(i=>!seen.has(i.key))),...shuffle(a.filter(i=>seen.has(i.key)))];
+  const perL=Math.floor(EXAM_N/LESSONS.length); let q=[];
+  for(const l of LESSONS){ const sp=fresh(l.items.filter(i=>i.t==="speak")), rest=fresh(l.items.filter(i=>i.t!=="speak")); q.push(sp[0].key,...rest.slice(0,perL-1).map(i=>i.key)) }
+  const left=fresh(LESSONS.flatMap(l=>l.items).filter(i=>!q.includes(i.key))); q.push(...left.slice(0,EXAM_N-q.length).map(i=>i.key));
+  // cuando ya no quedan suficientes sin ver, se reinicia el registro
+  const all=LESSONS.flatMap(l=>l.items).length; P.examSeen=[...new Set([...(seen.size+EXAM_N>all?[]:seen),...q])]; save();
   begin("exam",shuffle(q)) }
 function begin(mode,queue,lessonId){ S={mode,queue,idx:0,lessonId,hearts:mode==="exam"?null:5,mistakes:0,first:{},results:[],xp:0,retry:false}; if(mode==="exam")ls.set("o2o:exam:"+me,S); view="q"; render() }
 function cur(){return ITEM[S.queue[S.idx]]}
