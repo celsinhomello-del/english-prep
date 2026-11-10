@@ -41,6 +41,7 @@ input.ans{width:100%;box-sizing:border-box;font:inherit;font-size:18px;padding:1
 .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:14px;white-space:nowrap}
 .hero{background:var(--navy);color:var(--bg);border-radius:20px;padding:18px;display:grid;gap:10px;margin-bottom:22px}
 .hero h2{font-size:20px}
+.hero .btn.ghost{color:inherit;background:transparent;border-color:currentColor}
 .bar{height:10px;border-radius:99px;background:color-mix(in srgb,var(--bg) 25%,transparent);overflow:hidden}
 .bar i{display:block;height:100%;background:var(--red);border-radius:99px;transition:width .3s}
 .home{display:grid;gap:22px;grid-template-columns:minmax(0,1fr)}
@@ -762,14 +763,15 @@ function correctText(it){
 
 /* ---------- voz ---------- */
 const APOS={i:"I",im:"I'm",youre:"you're",hes:"he's",shes:"she's",its:"it's",theyre:"they're",whats:"what's",whos:"who's",wheres:"where's",thats:"that's",isnt:"isn't",arent:"aren't",dont:"don't",doesnt:"doesn't",cant:"can't"};
-function hush(){try{speechSynthesis.cancel()}catch(e){}}
+let dlgT,ansT; function hush(){clearTimeout(dlgT);clearTimeout(ansT);try{speechSynthesis.cancel()}catch(e){}}
+addEventListener("pagehide",()=>hush());
 let voice=null;
 // Android reporta el idioma como en_US, iOS/PC como en-US
 const DICT=/Android/i.test(navigator.userAgent)?"Tocá el campo y usá el <b>🎤 del teclado Gboard</b> para responder hablando.":/iPhone|iPad/i.test(navigator.userAgent)?"Tocá el campo y usá el <b>🎤 del teclado</b> del iPhone para responder hablando.":"Tocá el campo y usá el <b>dictado</b> para responder hablando. Mac: Fn dos veces · Windows: Windows + H.";
 const NOVELTY=/albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|deranged|hysterical|junior|ralph|kathy|fred|eddy|flo|grand|reed|rocko|sandy|shelley/i; // voces de efectos de iOS/macOS
 function pickVoice(){const vs=speechSynthesis.getVoices().filter(v=>!NOVELTY.test(v.name));voice=vs.find(v=>/en[-_]US/i.test(v.lang)&&/samantha|google us|united states|aria|jenny|allison/i.test(v.name))||vs.find(v=>/en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null}
 if("speechSynthesis" in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
-function speak(text,rate=0.92){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(text).replace(/\s+[—–]\s+/g," "));u.lang="en-US";if(voice)u.voice=voice;u.rate=rate;speechSynthesis.speak(u)}catch(e){}}
+function speak(text,rate=0.92){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(text).replace(/\s*[—–]\s*/g,". ").replace(/\.{3}|…/g,","));u.lang="en-US";if(voice)u.voice=voice;u.rate=rate;speechSynthesis.speak(u)}catch(e){}}
 // conversaciones: cada persona con otra voz si el equipo tiene más de una; si no, cambia el tono
 function playDialog(id,rate=0.92){ try{ speechSynthesis.cancel(); let vs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)&&!NOVELTY.test(v.name)).sort((a,b)=>(/en[-_]US/i.test(b.lang))-(/en[-_]US/i.test(a.lang))); if(voice)vs=[voice,...vs.filter(v=>v!==voice)];
   const pitch={A:1,B:.78,C:1.28}, idx={A:0,B:1,C:2};
@@ -781,7 +783,7 @@ let micBlocked=!SR, rec=null;
 function listen(onText,onEnd){
   if(micBlocked)return false;
   try{rec=new SR();rec.lang="en-US";rec.interimResults=false;rec.maxAlternatives=3;
-    rec.onresult=e=>{const alts=[...e.results[0]].map(a=>a.transcript);onText(alts)};
+    rec.onresult=e=>{const alts=[...e.results[0]].map(a=>a.transcript);onText(alts);if(matchMedia("(pointer:fine)").matches)$("#ans")?.focus()};
     rec.onerror=e=>{if(/not-allowed|service-not-allowed|audio-capture/.test(e.error)){micBlocked=true;onEnd("blocked")}else onEnd("error")};
     rec.onend=()=>onEnd();try{speechSynthesis.cancel()}catch(e){}rec.start();return true}catch(e){micBlocked=true;return false}
 }
@@ -797,7 +799,7 @@ function sfx(k){ if(mute)return; try{ actx=actx||new (window.AudioContext||windo
   else if(k==="done"){[523,659,784,1047].forEach((f,i)=>tone(f,i*.12,.3,"triangle",.16));tone(1319,.5,.5,"sine",.12)}
   else if(k==="tap"){tone(600,0,.04,"sine",.05)}
 }catch(e){} }
-function toggleMute(){ mute=!mute; try{localStorage.setItem("o2o:mute",JSON.stringify(mute))}catch(e){} document.querySelectorAll(".snd").forEach(b=>{b.textContent=mute?"🔇":"🔊";b.setAttribute("aria-label",mute?"Activar sonido":"Silenciar")}); if(!mute)sfx("ok") }
+function toggleMute(){ mute=!mute; try{localStorage.setItem("o2o:mute",JSON.stringify(mute))}catch(e){} if(mute)hush(); document.querySelectorAll(".snd").forEach(b=>{b.textContent=mute?"🔇":"🔊";b.setAttribute("aria-label",mute?"Activar sonido":"Silenciar")}); if(!mute)sfx("ok") }
 const sndBtn=()=>`<button class="snd" onclick="toggleMute()" aria-label="${mute?"Activar sonido":"Silenciar"}">${mute?"🔇":"🔊"}</button>`;
 let fxRun=0;
 function confetti(){ const run=++fxRun; if(matchMedia("(prefers-reduced-motion: reduce)").matches)return; let cv=$("#fx"); if(!cv){cv=document.createElement("canvas");cv.id="fx";document.body.appendChild(cv)}
@@ -860,7 +862,7 @@ function progressCard(){
     <line x1="0" x2="${Math.max(h.length,4)*44}" y1="${90-0.6*80}" y2="${90-0.6*80}" class="pass"/>
     ${h.map((v,i)=>`<rect x="${i*44+10}" y="${90-v*.8}" width="24" height="${Math.max(v*.8,2)}" rx="4" class="${v>=60?"good":"low"}"/><text x="${i*44+22}" y="${84-v*.8}" text-anchor="middle">${v}%</text><text x="${i*44+22}" y="106" text-anchor="middle" class="ax">#${i+1}</text>`).join("")}
   </svg><span class="muted small">La línea marca el 60% (aprobado).</span>`:`<p class="muted small" style="margin:0">Hacé el test de prueba para ver acá cómo evolucionan tus notas.</p>`;
-  return `<section class="prog"><span class="eyebrow">Tu progreso</span><p class="small" style="margin:4px 0 8px">Ronda ${(P.rounds||0)+1}: <b>${(P.round||[]).length}/${LESSONS.length}</b> lecciones · ${LESSON_N} preguntas cada una (~25 min la ronda)</p>
+  return `<section class="prog"><span class="eyebrow">Tu progreso</span><p class="small" style="margin:4px 0 8px">Ronda ${(P.rounds||0)+1}: <b>${(P.round||[]).length}/${LESSONS.length}</b> lecciones · ${LESSON_N} preguntas cada una (~25–30 min la ronda)</p>
     ${units.map(x=>`<div class="urow"><b>Unit ${x.u}</b><div class="ubar" aria-label="${x.pct}%"><i style="width:${x.pct}%"></i></div><span class="muted small">${x.pct}%</span></div>`).join("")}
     <span class="eyebrow" style="margin-top:8px">Notas del test de prueba</span>${bars}</section>` }
 function logout(){ls.set("o2o:me",null);me=null;go("login")}
@@ -894,7 +896,7 @@ function startExam(){ const saved=ls.get("o2o:exam:"+me);
 function begin(mode,queue,lessonId){ S={mode,queue,idx:0,lessonId,hearts:mode==="exam"?null:5,mistakes:0,first:{},results:[],xp:0,retry:false,streak:0,best:0}; if(mode==="exam")ls.set("o2o:exam:"+me,S); view="q"; render() }
 function cur(){return ITEM[S.queue[S.idx]]}
 let resp=null;
-function vQ(){
+function vQ(){ hush();
   document.onkeydown=null; // el atajo de teclado de la pregunta anterior no debe actuar sobre esta
   const it=cur(), total=S.queue.length; resp=null;
   const pct=S.idx/total*100;
@@ -922,16 +924,17 @@ function vQ(){
     const mb=$("#micb"); if(mb)mb.onclick=()=>{ if(mb.classList.contains("on")){try{rec?.stop()}catch(e){}return} mb.classList.add("on");mb.textContent="Escuchando…";
       const ok=listen(alts=>{const best=alts.find(t=>grade(it,t)!=="bad")||alts[0];a.value=best;set(best)},st=>{mb.classList.remove("on");mb.textContent="🎤 Tocá y hablá";if(st==="blocked"){mb.remove();$(".hint").innerHTML=DICT}else if(st==="error")$(".hint").textContent="No te escuché. Tocá y hablá de nuevo, más cerca del micrófono."});
       if(!ok){mb.remove();$(".hint").innerHTML=DICT} } }
-  if(it.t==="mc"||it.t==="order")document.onkeydown=e=>{const c=$("#chk");if($("#qc")){if(e.key==="Escape")$("#qc .btn.ghost").click();return}if(!c){const fb=footin.querySelector(".btn");if(e.key==="Enter"&&fb&&document.activeElement!==fb){e.preventDefault();fb.click()}return}if(e.key==="Enter"&&!c.disabled){e.preventDefault();check()}else if(it.t==="mc"){const b=app.querySelectorAll(".opt")[e.key-1];if(b)b.click()}};
+  if(it.t==="mc"||it.t==="order")document.onkeydown=e=>{const c=$("#chk");if($("#qc")){if(e.key==="Escape")$("#qc .btn.ghost").click();return}if(!c){const fb=footin.querySelector(".btn");if(e.key==="Enter"&&fb&&Date.now()-(window.endAt||0)>700&&document.activeElement!==fb){e.preventDefault();fb.click()}return}if(e.key==="Enter"&&!c.disabled){e.preventDefault();check()}else if(it.t==="mc"){const b=app.querySelectorAll(".opt")[e.key-1];if(b)b.click()}};
   window.scrollTo(0,0);
-  if(it.t==="listen"||(it.t==="speak"&&it.say))speak(it.say);
-  if(it.dlg&&S.lastDlg!==it.dlg){S.lastDlg=it.dlg;setTimeout(()=>{if(view==="q"&&cur()===it)playDialog(it.dlg)},300)}
+  if(!mute&&(it.t==="listen"||(it.t==="speak"&&it.say)))speak(it.say);
+  if(it.dlg&&S.lastDlg!==it.dlg){S.lastDlg=it.dlg;dlgT=setTimeout(()=>{if(view==="q"&&cur()===it)playDialog(it.dlg)},300)}
 }
-function showFoot(cls,html){foot.className="foot "+cls;footin.innerHTML=html;foot.hidden=false;requestAnimationFrame(()=>{app.style.paddingBottom=foot.offsetHeight+16+"px";const a=$("#ans");if(cls&&a&&document.activeElement===a){const d=a.getBoundingClientRect().bottom-foot.getBoundingClientRect().top+8;if(d>0)scrollBy(0,d)}});if(document.activeElement?.id!=="ans")footin.querySelector(".btn:not(:disabled)")?.focus({preventScroll:true})}
+function showFoot(cls,html){foot.className="foot "+cls;footin.innerHTML=html;foot.hidden=false;requestAnimationFrame(()=>{app.style.paddingBottom=foot.offsetHeight+16+"px";const a=$("#ans");if(cls&&a&&document.activeElement===a){const d=a.getBoundingClientRect().bottom-foot.getBoundingClientRect().top+8;if(d>0)scrollBy(0,d)}});if(document.activeElement?.id!=="ans"){const fb=footin.querySelector(".btn:not(:disabled)"),wait=Math.max(0,700-(Date.now()-(window.endAt||0)));document.activeElement?.blur?.();setTimeout(()=>{if(fb&&fb.isConnected)fb.focus({preventScroll:true})},wait)}} // en pantallas de resultado, foco tarde para que un Enter doble no saltee
 const ES_RE=/[ñ¿¡]|(^|[^a-záéíóúñ])(es|el|la|los|las|que|cree|muy|está|chicas|grandes|soy|de|del|en|un|una|unos|su|con|y|sabe|mozo|más|menos|él|sí|tú|qué|cuál|biblioteca|realidad|actualmente|futbolista)(?![a-záéíóúñ])/i;
 const isES=t=>ES_RE.test(String(t).replace(/\b(?:[A-Z]-)+[A-Z]\b/g,"")); // R-E-Y-E-S no es "es"
 // lo que dijo/escribió el alumno, prolijo (o el modelo si coincide o fue un error de tipeo)
-function spokenAnswer(it,r,g){const ct=correctText(it);if(ct&&(g==="typo"||norm(ct).replace(/ /g,"")===norm(r).replace(/ /g,"")))return ct;return String(r).replace(/\b[a-z]+\b/gi,w=>APOS[w.toLowerCase()]||w)}
+function spokenAnswer(it,r,g){const ct=correctText(it);if(ct&&(g==="typo"||norm(ct).replace(/ /g,"")===norm(r).replace(/ /g,"")))return ct;if(ct&&/^([A-Z]-)+[A-Z]\.?$/.test(ct)){const L=norm(r).replace(/[^a-z]/g,"");if(L)return L.toUpperCase().split("").join("-")} // deletreo: letra por letra
+  const t=String(r).toLowerCase().replace(/\b[a-z]+\b/gi,w=>APOS[w]||w); return t.charAt(0).toUpperCase()+t.slice(1)}
 // respuesta correcta para leer en voz: frase completa en completar, frase de la conversación en preguntas de audio
 function answerAudio(it){const ct=correctText(it);if(!ct)return null;
   if(it.dlg){const ex=(it.expl||"").match(/<i>(.*?)<\/i>/);if(ex)return ex[1].replace(/<[^>]+>/g,"")}
@@ -952,13 +955,13 @@ function check(){
     const note=g==="typo"?`<p>Casi perfecto, revisá la ortografía: <b>${esc(correctText(it))}</b></p>`:(it.t==="speak"||it.t==="translate"||it.t==="fix")&&correctText(it)?`<p class="small">Modelo: <i>${esc(correctText(it))}</i></p>`:"";
     {const sa=["speak","translate","fix"].includes(it.t)?spokenAnswer(it,resp,g):it.t==="order"||/___/.test(it.q)?answerAudio(it):null; S.ans=sa&&!isES(sa)?sa:null} // en "hablar" se repite lo que dijo el alumno
     showFoot("ok",`<div class="fb"><h3>${PRAISE[Math.random()*PRAISE.length|0]}</h3>${streakTag}${note}${ansBtns()}</div><button class="btn" onclick="nextQ()">Continuar</button>`); if(it.dlg&&$("#qb"))$("#qb").insertAdjacentHTML("beforeend",transcript(it));
-    if(S.ans)speak(S.ans);
+    if(S.ans&&!mute)ansT=setTimeout(()=>speak(S.ans),380);
   } else {
     sfx("bad"); S.streak=0; const qb=$("#qb"); if(qb){qb.classList.remove("shake");void qb.offsetWidth;qb.classList.add("shake")}
     if(firstTry){ S.first[it.key]=1; S.mistakes++; if(S.hearts!=null){S.hearts--;const hh=$(".hearts");if(hh){hh.textContent="♥ "+S.hearts;hh.classList.remove("beat");void hh.offsetWidth;hh.classList.add("beat")}} if(!P.missed.includes(it.key))P.missed.push(it.key); S.queue.push(it.key) }
-    const ct=correctText(it); {const sa=answerAudio(it); S.ans=sa&&!/[\/@]/.test(sa)&&!isES(sa)?sa:null} // no leer en voz inglesa respuestas en español ni símbolos
+    const ct=correctText(it); {const sa=answerAudio(it); S.ans=sa&&!/[\/@]/.test(sa)&&!/'[^']+'/.test(sa)&&!isES(sa)?sa:null} // no leer en voz inglesa respuestas en español ni símbolos
     showFoot("bad",`<div class="fb"><h3>No es correcto <span style="font-weight:600;white-space:nowrap">· ${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p>${ansBtns()}</div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`); if(it.dlg&&$("#qb"))$("#qb").insertAdjacentHTML("beforeend",transcript(it));
-    if(S.ans)speak(S.ans,.9);
+    if(S.ans&&!mute)ansT=setTimeout(()=>speak(S.ans,.9),380);
   }
   save();
 }
@@ -966,8 +969,8 @@ function retryQ(){ if(S.hearts===0){view="end";S.failed=true;return render()} S.
 function nextQ(){ S.retry=false; S.idx++; if(S.idx>=S.queue.length){view="end";return render()} vQ() }
 function quit(){ if($("#qc"))return; const ex=S.mode==="exam";
   [...footin.children].forEach(c=>c.hidden=true);
-  footin.insertAdjacentHTML("beforeend",`<div id="qc" style="display:grid;gap:10px"><p style="margin:0">${ex?"¿Salir del test de prueba? Tu avance queda guardado y podés continuarlo desde el inicio.":"¿Salir de la lección? Vas a perder el avance de esta lección."}</p><button class="btn red" onclick="go('home')">Salir</button><button class="btn ghost" onclick="$('#qc').remove();[...footin.children].forEach(c=>c.hidden=false)">Seguir practicando</button></div>`); $("#qc .btn.ghost").focus() }
-function vEnd(){
+  footin.insertAdjacentHTML("beforeend",`<div id="qc" style="display:grid;gap:10px"><p style="margin:0">${ex?"¿Salir del test de prueba? Tu avance queda guardado y podés continuarlo desde el inicio.":"¿Salir de la lección? Vas a perder el avance de esta lección."}</p><button class="btn red" onclick="go('home')">Salir</button><button class="btn ghost" onclick="$('#qc').remove();[...footin.children].forEach(c=>c.hidden=false)">Seguir practicando</button></div>`); $("#qc .btn.ghost").focus(); $("#qc").onkeydown=e=>{if(e.key==="Escape")$("#qc .btn.ghost").click()} }
+function vEnd(){ window.endAt=Date.now();
   if(S.failed){ save(); app.innerHTML=`<div class="result"><div class="big">♥ 0</div><h2>Te quedaste sin vidas</h2><p class="muted">Los errores quedaron guardados en "Repasar mis errores". Volvé a leer el tip y repetí la lección.</p></div>`;
     showFoot("",`<button class="btn red" onclick="${S.mode==="lesson"?`openTip('${S.lessonId}')`:"startReview()"}">Repetir</button><button class="btn ghost" onclick="go('home')">Volver al inicio</button>`); return }
   const st=S.mistakes===0?3:S.mistakes<=2?2:1; S.xp+=st*5; P.xp+=S.xp;
@@ -985,7 +988,7 @@ function vEnd(){
 function finishExam(){ const ok=S.results.filter(r=>r.ok).length, pct=Math.round(ok/S.results.length*100);
   S.results.filter(r=>!r.ok).forEach(r=>{if(!P.missed.includes(r.key))P.missed.push(r.key)});
   S.record=pct>(P.exam.best??-1); P.exam.tries++; P.exam.last=pct; P.exam.hist=[...(P.exam.hist||[]),pct].slice(-8); P.exam.best=Math.max(P.exam.best??0,pct); P.xp+=ok; save(); ls.set("o2o:exam:"+me,null); view="examEnd"; render() }
-function vExamEnd(){
+function vExamEnd(){ window.endAt=Date.now();
   const bad=S.results.filter(r=>!r.ok), ok=S.results.length-bad.length, pct=Math.round(ok/S.results.length*100);
   const weak={}; bad.forEach(r=>{const l=ITEM[r.key].lesson;weak[l]=(weak[l]||0)+1});
   const wk=Object.entries(weak).sort((a,b)=>b[1]-a[1]);
