@@ -68,7 +68,7 @@ input.ans{width:100%;box-sizing:border-box;font:inherit;font-size:18px;padding:1
 .prog{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px}.prog .eyebrow{color:var(--red);font-weight:600}
 .urow{display:grid;grid-template-columns:52px minmax(0,1fr) 34px;gap:10px;align-items:center;font-size:14px}.ubar{height:12px;border-radius:99px;background:var(--tile);overflow:hidden}.ubar i{display:block;height:100%;background:linear-gradient(90deg,var(--navy),var(--red));border-radius:99px}
 .chart{display:block;height:120px;width:auto;max-width:100%}.chart text{font-size:11px;fill:var(--fg);font-family:var(--body);font-weight:600}.chart .ax{fill:var(--muted);font-weight:400}.chart .good{fill:var(--ok)}.chart .low{fill:var(--red)}.chart .pass{stroke:var(--muted);stroke-dasharray:4 4;stroke-width:1}
-.lnk{border:0;background:none;color:var(--navy);text-decoration:underline;padding:12px 0;font-size:inherit}
+.lnk{min-height:44px;border:0;background:none;color:var(--navy);text-decoration:underline;padding:12px 0;font-size:inherit}
 .hero{position:relative;overflow:hidden}
 .hero>*{position:relative}
 .stripes{position:absolute!important;right:-50px;bottom:-70px;width:180px;height:180px;border-radius:50%;background:repeating-linear-gradient(0deg,color-mix(in srgb,var(--red) 55%,transparent) 0 14px,transparent 14px 28px);opacity:.35}
@@ -773,7 +773,7 @@ function playDialog(id,rate=0.92){ try{ speechSynthesis.cancel(); let vs=speechS
   const pitch={A:1,B:.78,C:1.28}, idx={A:0,B:1,C:2};
   for(const [who,text] of DIALOGS[id].lines){ const u=new SpeechSynthesisUtterance(text); u.lang="en-US"; u.rate=rate; u.pitch=pitch[who]||1;
     const v=vs.length?vs[(idx[who]||0)%vs.length]:voice; if(v)u.voice=v; speechSynthesis.speak(u) } }catch(e){} }
-function transcript(it){ return it.dlg?`<details class="trx" ontoggle="if(!foot.hidden)app.style.paddingBottom=foot.offsetHeight+16+'px'"><summary>Ver la conversación</summary>${DIALOGS[it.dlg].lines.map(([w,t])=>`<p><b>${w}:</b> ${esc(t)}</p>`).join("")}</details>`:"" }
+function transcript(it){ return it.dlg?`<details class="trx"><summary>Ver la conversación</summary>${DIALOGS[it.dlg].lines.map(([w,t])=>`<p><b>${w}:</b> ${esc(t)}</p>`).join("")}</details>`:"" }
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 let micBlocked=!SR, rec=null;
 function listen(onText,onEnd){
@@ -937,13 +937,13 @@ function check(){
     const streakTag=firstTry&&st>=3?`<span class="streak"><b>🔥</b> ${st} seguidas${bonus?` · +${bonus} XP`:""}${st>=5?" · On fire!":""}</span>`:"";
     sfx(bonus?"streak":"ok"); $("#qb")?.classList.add("pop");
     const note=g==="typo"?`<p>Casi perfecto, revisá la ortografía: <b>${esc(correctText(it))}</b></p>`:(it.t==="speak"||it.t==="translate"||it.t==="fix")&&correctText(it)?`<p class="small">Modelo: <i>${esc(correctText(it))}</i></p>`:"";
-    showFoot("ok",`<div class="fb"><h3>${PRAISE[Math.random()*PRAISE.length|0]}</h3>${streakTag}${note}${transcript(it)}</div><button class="btn" onclick="nextQ()">Continuar</button>`);
+    showFoot("ok",`<div class="fb"><h3>${PRAISE[Math.random()*PRAISE.length|0]}</h3>${streakTag}${note}</div><button class="btn" onclick="nextQ()">Continuar</button>`); if(it.dlg&&$("#qb"))$("#qb").insertAdjacentHTML("beforeend",transcript(it));
     if(["order","translate","speak","fix"].includes(it.t)&&correctText(it))speak(correctText(it));
   } else {
     sfx("bad"); S.streak=0; const qb=$("#qb"); if(qb){qb.classList.remove("shake");void qb.offsetWidth;qb.classList.add("shake")}
     if(firstTry){ S.first[it.key]=1; S.mistakes++; if(S.hearts!=null){S.hearts--;const hh=$(".hearts");if(hh){hh.textContent="♥ "+S.hearts;hh.classList.remove("beat");void hh.offsetWidth;hh.classList.add("beat")}} if(!P.missed.includes(it.key))P.missed.push(it.key); S.queue.push(it.key) }
     const ct=correctText(it);
-    showFoot("bad",`<div class="fb"><h3>No es correcto <span style="font-weight:600;white-space:nowrap">· ${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p>${transcript(it)}</div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`);
+    showFoot("bad",`<div class="fb"><h3>No es correcto <span style="font-weight:600;white-space:nowrap">· ${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p></div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`); if(it.dlg&&$("#qb"))$("#qb").insertAdjacentHTML("beforeend",transcript(it));
     if(ct&&!/[ñ¿¡]|(^|[^a-záéíóúñ])(es|el|la|los|las|que|cree|muy|está|chicas|grandes|soy|de|del|en|un|una|unos|su|con|y|sabe|mozo|más|menos|él|sí|tú|qué|cuál|biblioteca|realidad|actualmente|futbolista)(?![a-záéíóúñ])/i.test(ct))speak(ct,.9); // no leer en voz inglesa respuestas en español
   }
   save();
