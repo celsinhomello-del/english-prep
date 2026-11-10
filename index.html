@@ -125,7 +125,7 @@ input.ans{width:100%;box-sizing:border-box;font:inherit;font-size:18px;padding:1
 <div class="foot" id="foot" hidden><div class="in" id="footin"></div></div>
 
 <script>
-// Banco de ejercicios ID 1 (Richmond), unidades 1.1–4.4.
+// Banco de ejercicios ID 1 (Richmond), unidades 1.1–3.5.
 // M=opción múltiple (la 1ª opción es la correcta), F=completar, O=ordenar, L=escuchar y escribir,
 // S=hablar (say=lo que la app pregunta en voz alta), T=traducir escribiendo. Respuestas: strings o RegExp sobre texto normalizado.
 const NAME = "[a-z]+";
@@ -388,78 +388,6 @@ const UNITS = [
   SP("Respondé.","Who do you live with?",[/^(i live (alone|with [a-z ]+)|with [a-z ]+|alone)/],"<i>I live with my wife.</i> / <i>I live alone.</i>"),
   T("Traducí: Vivo lejos de acá.",["i live far from here","i live far away from here","i live far away"],"<i>I live far from here.</i>"),
   ]},
-{ id:"4.1", unit:4, title:"Is there an ATM near here?", topic:"There is / there are, objetos personales, colores",
-  tip:`<b>There is</b> (singular) / <b>There are</b> (plural) = hay.<br><i>There's an ATM near here. There are two banks.</i><br><b>Negativo:</b> There isn't a bank. There aren't any stores.<br><b>Pregunta:</b> <i>Is there an ATM? — Yes, there is. / No, there isn't.</i> <i>Are there any keys? — Yes, there are.</i><br><b>Objetos:</b> wallet, keys, phone, glasses, umbrella, watch, sunglasses, ID card, credit card.<br><b>Colores:</b> black, white, red, blue, green, yellow, brown, gray, pink, orange, purple.`,
-  items:[
-  M("Completá: ___ an ATM near here.",["There's","There are","They're"],"singular → <b>There's</b> (there is)."),
-  M("Completá: ___ three keys in my bag.",["There are","There is","They are"],"plural → <b>There are</b>."),
-  M("Pregunta correcta:",["Is there a bank near here?","There is a bank near here?","Are there a bank near here?"],"Pregunta: <b>Is there</b> + singular?"),
-  M("Respuesta corta: 'Are there any stores?' (no)",["No, there aren't.","No, there isn't.","No, they aren't."],"plural → <b>No, there aren't.</b>"),
-  M("'Wallet' es:",["billetera","reloj","llave"],"wallet = billetera."),
-  F("There ___ two umbrellas in the car.",["are"],"plural → <b>are</b>."),
-  F("___ there an ATM? — Yes, there is.",["is"],"singular → <b>Is</b> there…?"),
-  O("Ordená la pregunta","Is there an ATM near here?"),
-  O("Ordená la frase","There are two black phones."),
-  L("There's a red wallet in my bag.","<i>There's a red wallet in my bag.</i>"),
-  SP("Preguntá: '¿Hay un cajero automático cerca?'",null,["is there an atm near here","is there an atm near","is there an atm nearby"],"<i>Is there an ATM near here?</i>"),
-  SP("Respondé: ¿qué hay en tu bolso?","What's in your bag?",[/^(there is|there are|in my bag there (is|are))\b/,/^(my|a|an|some|two|three) [a-z]+/,/^(keys|money)\b/],"<i>There's a phone and there are two keys.</i>"),
-  T("Traducí: No hay un banco acá.",["there is not a bank here","there isnt a bank here","there is no bank here"],"<i>There isn't a bank here.</i>"),
-  ]},
-{ id:"4.2", unit:4, title:"Are those your books?", topic:"This / that / these / those",
-  tip:`<b>Cerca:</b> this (singular) / these (plural).<br><b>Lejos:</b> that (singular) / those (plural).<br><i>This is my phone. These are my keys.</i><br><i>Is that your car? Are those your books?</i><br>Respuestas: <i>Yes, it is. / Yes, they are.</i>`,
-  items:[
-  M("Plural cerca:",["these","those","this"],"cerca + plural → <b>these</b>."),
-  M("Singular lejos:",["that","this","those"],"lejos + singular → <b>that</b>."),
-  M("Completá: ___ are my glasses. (en mi mano)",["These","This","That"],"plural cerca → <b>These</b>."),
-  M("Completá: Are ___ your books? (allá)",["those","that","this"],"plural lejos → <b>those</b>."),
-  M("Respuesta: 'Are those your keys?' (sí)",["Yes, they are.","Yes, it is.","Yes, these is."],"plural → <b>Yes, they are.</b>"),
-  F("___ is my phone. (en mi mano)",["this"],"singular cerca → <b>This</b>."),
-  F("Is ___ your car? (allá lejos)",["that"],"singular lejos → <b>that</b>."),
-  O("Ordená la pregunta","Are those your books?"),
-  O("Ordená la frase","These are my keys."),
-  L("Is that your umbrella?","<i>Is that your umbrella?</i>"),
-  SP("Preguntale a tu amigo: '¿Esos son tus libros?' (están lejos)",null,["are those your books"],"<i>Are those your books?</i>"),
-  SP("Decí: 'Estas son mis llaves.'",null,["these are my keys"],"<i>These are my keys.</i>"),
-  T("Traducí: ¿Es ese tu auto?",["is that your car"],"<i>Is that your car?</i>"),
-  ]},
-{ id:"4.3", unit:4, title:"What things do you lose?", topic:"Plurales y decir la hora",
-  tip:`<b>Plurales:</b> key → keys, watch → watch<b>es</b>, glass → glass<b>es</b>, knife → kni<b>ves</b>, man → men, child → children.<br><b>La hora:</b> <i>What time is it?</i><br>7:00 = It's seven o'clock. · 7:15 = It's a quarter past seven / seven fifteen. · 7:30 = It's half past seven / seven thirty. · 7:45 = It's a quarter to eight / seven forty-five. · 7:10 = It's ten past seven. · 7:50 = It's ten to eight.<br>EE.UU. también: <i>a quarter after seven</i>, <i>ten after seven</i>.`,
-  items:[
-  M("Plural de 'watch':",["watches","watchs","watch"],"termina en -ch → <b>-es</b>."),
-  M("Plural de 'child':",["children","childs","childrens"],"Irregular: <b>children</b>."),
-  M("7:30 se dice:",["half past seven","half past eight","half to seven"],"7:30 = <b>half past seven</b>."),
-  M("8:45 se dice:",["a quarter to nine","a quarter past eight","a quarter to eight"],"8:45 = faltan 15 para las 9 = <b>a quarter to nine</b>."),
-  M("¿Cómo preguntás la hora?",["What time is it?","What hour is it?","How time is it?"],"<i>What time is it?</i>"),
-  M("En EE.UU., 7:15 también se dice:",["a quarter after seven","a quarter to seven","seven and a quarter"],"AmE: <i>a quarter after seven</i> = <i>a quarter past seven</i>."),
-  F("It's three ___. (3:00)",["oclock"],"en punto = <b>o'clock</b>."),
-  F("I always lose my ___. (plural de key)",["keys"],"key → <b>keys</b>."),
-  O("Ordená la pregunta","What time is it?"),
-  O("Ordená la frase","It is a quarter past ten."),
-  L("It's ten past six.","6:10 = ten past six.",["it is six ten","ten past six"]),
-  L("It's a quarter to five.","4:45 = a quarter to five.",["it is four forty five","it is quarter to five","a quarter to five"]),
-  SP("Decí la hora: 9:15",null,["it is a quarter past nine","a quarter past nine","it is nine fifteen","nine fifteen","quarter past nine","it is quarter past nine"],"<i>It's a quarter past nine</i> / <i>It's nine fifteen.</i>"),
-  SP("Respondé.","What things do you lose?",[/^(i (always |often |sometimes |usually |never )?lose [a-z]+|my [a-z]+|(my )?(keys|glasses|phone|wallet|umbrella|sunglasses|money)\b)/],"<i>I lose my keys and my glasses.</i>"),
-  ]},
-{ id:"4.4", unit:4, title:"What time do you get up?", topic:"Rutina diaria, repaso presente simple",
-  tip:`<b>Rutina:</b> get up, have breakfast, take a shower, go to work, have lunch, finish work, go home, have dinner, watch TV, go to bed.<br><b>Hora:</b> <i>What time do you get up?</i> → <i>I get up <b>at</b> 6:30.</i><br><b>He/she:</b> She get<b>s</b> up at 7. He go<b>es</b> to bed at 11.<br><b>Preguntas:</b> <i>What time does she have lunch?</i><br><b>Partes del día:</b> in the morning, in the afternoon, in the evening, <b>at</b> night. Días: <b>on</b> Monday.<br><b>Frecuencia</b> (antes del verbo): always, usually, often, sometimes, never → <i>I always get up at 7.</i> · <i>go home</i> (sin to).`,
-  items:[
-  M("Completá: I get up ___ 7:00.",["at","in","on"],"hora → <b>at</b>."),
-  M("Completá: She ___ to bed at 11.",["goes","go","gos"],"go → <b>goes</b> con she."),
-  M("Pregunta correcta:",["What time do you get up?","What time you get up?","What time does you get up?"],"<b>do</b> + you + verbo."),
-  M("Completá: I watch TV ___ the evening.",["in","at","on"],"<b>in</b> the evening (pero <b>at</b> night)."),
-  M("Pregunta correcta:",["What time does he have lunch?","What time does he has lunch?","What time do he have lunch?"],"<b>does</b> + verbo sin s."),
-  M("Completá: I go ___ at 6 p.m.",["home","to home","to the home"],"<i>go home</i> sin <i>to</i>. ❌ go to home."),
-  M("Orden correcto:",["I always get up at seven.","I get always up at seven.","I get up always at seven."],"El adverbio de frecuencia va <b>antes</b> del verbo (pero después de be: <i>I'm always late</i>)."),
-  F("I don't work ___ Sunday.",["on"],"Días → <b>on</b>: on Monday, on Sunday."),
-  F("What time ___ you go to work?",["do"],"you → <b>do</b>."),
-  F("He ___ breakfast at 6:30. (have)",["has"],"have → <b>has</b>."),
-  O("Ordená la pregunta","What time do you get up?"),
-  O("Ordená la pregunta","What time does she have lunch?"),
-  L("I get up at six thirty and have breakfast.","<i>I get up at six thirty and have breakfast.</i>"),
-  SP("Respondé (cualquier hora).","What time do you get up?",[new RegExp("^i (usually |always |normally )?(get|wake) up at ((a )?quarter (past|to|after) |half past |(ten|twenty|five|twenty five) (past|to|after) )?(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\\b")],"<i>I get up at…</i>"),
-  SP("Contá algo de tu día.","Tell me about your typical day.",[/^((every day|in the morning|usually) )?i (usually |always |normally )?(get up|wake up|have|go|take|work|start)/],"<i>I get up at 6, I have breakfast and I go to work at 7.</i>"),
-  T("Traducí: Ella se acuesta a las 10.",[/^she goes to bed at ten( oclock)?( pm| p m| at night| in the evening)?$/],"<i>She goes to bed at ten.</i>"),
-  ]},
 ];
 function M(q,opts,expl){return{t:"mc",q,opts,expl}}
 function F(q,a,expl){return{t:"fill",q,a,expl}}
@@ -536,7 +464,7 @@ const slug=n=>norm(n).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40
 const ls={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const blank=name=>({name,xp:0,done:{},missed:[],exam:{best:null,last:null,tries:0},updatedAt:0});
 function merge(a,b){ if(!a)return b; if(!b)return a; const o=blank(a.name||b.name); o.xp=Math.max(a.xp||0,b.xp||0);
-  for(const k of new Set([...Object.keys(a.done||{}),...Object.keys(b.done||{})]))o.done[k]=Math.max(a.done?.[k]||0,b.done?.[k]||0);
+  for(const k of new Set([...Object.keys(a.done||{}),...Object.keys(b.done||{})]))if(LESSONS.some(l=>l.id===k))o.done[k]=Math.max(a.done?.[k]||0,b.done?.[k]||0);
   o.missed=[...new Set([...(a.missed||[]),...(b.missed||[])])].filter(k=>ITEM[k]);
   o.exam={best:Math.max(a.exam?.best??-1,b.exam?.best??-1),last:(a.updatedAt||0)>(b.updatedAt||0)?a.exam?.last:b.exam?.last,tries:Math.max(a.exam?.tries||0,b.exam?.tries||0)}; if(o.exam.best<0)o.exam.best=null;
   o.updatedAt=Math.max(a.updatedAt||0,b.updatedAt||0); return o }
@@ -554,7 +482,7 @@ function header(){ const done=Object.keys(P.done).length;
 function go(v){view=v;render()}
 function vLogin(){
   app.innerHTML=`<div class="login"><img src="${LOGO}" alt="One2One — You make it real"><h1>English Exam Prep</h1>
-  <p class="muted">ID 1 · Unidades 1.1 a 4.4 · escrito, oral y opción múltiple</p>
+  <p class="muted">ID 1 · Unidades 1.1 a 3.5 · escrito, oral y opción múltiple</p>
   <form id="lf" style="display:grid;gap:12px"><label for="nm" class="muted small">Escribí tu nombre para guardar tu progreso</label>
   <input class="ans" id="nm" autocomplete="given-name" placeholder="Tu nombre" maxlength="30" value="${esc(ls.get("o2o:last")||"")}"><button class="btn red">Empezar</button></form></div>`;
   $("#lf").onsubmit=e=>{e.preventDefault();login($("#nm").value)}; }
@@ -583,7 +511,7 @@ function vTip(){ const l=S.lesson;
 function startLesson(){ const l=S.lesson; begin("lesson",shuffle(l.items).map(i=>i.key),l.id) }
 function startReview(){ if(!P.missed.length)return go("home"); begin("review",shuffle(P.missed).slice(0,15)) }
 function startExam(){ const saved=ls.get("o2o:exam:"+me);
-  if(saved&&saved.idx<saved.queue.length){ S={...saved,mode:"exam"}; S.hearts=null; view="q"; render(); return }
+  if(saved&&saved.idx<saved.queue.length&&saved.queue.every(k=>ITEM[k])){ S={...saved,mode:"exam"}; S.hearts=null; view="q"; render(); return }
   // 100 preguntas: reparto por lección, con al menos 1 de hablar por lección
   const perL=Math.floor(100/LESSONS.length); let q=[];
   for(const l of LESSONS){ const sp=shuffle(l.items.filter(i=>i.t==="speak")), rest=shuffle(l.items.filter(i=>i.t!=="speak")); q.push(sp[0].key,...rest.slice(0,perL-1).map(i=>i.key)) }
