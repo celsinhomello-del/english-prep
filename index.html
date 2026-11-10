@@ -58,7 +58,8 @@ input.ans{width:100%;box-sizing:border-box;font:inherit;font-size:18px;padding:1
 .card .txt{flex:1;min-width:0}.card b{display:block}
 .score{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .score>div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:grid}
-.score .eyebrow{color:var(--red);font-weight:600;opacity:1}
+.score .eyebrow{color:var(--red);font-weight:600;opacity:1;min-height:2.6em}
+.trx[open]{max-height:35vh;overflow:auto}
 .sc{font-family:var(--display);font-weight:900;font-size:30px;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1.2}
 .pic{display:flex;justify-content:center;margin:0 0 16px}.pic span{font-size:84px;line-height:1.1;letter-spacing:4px}.pic img{width:120px;height:auto;filter:drop-shadow(0 4px 10px color-mix(in srgb,var(--navy) 25%,transparent))}
 .dlg{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}.spk.wide{width:auto;padding:0 18px;font-size:16px;font-weight:600;font-family:var(--body)}
@@ -717,14 +718,14 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const LESSONS=UNITS; UNITS.forEach(u=>u.items.forEach((it,i)=>it.key=u.id+"#"+i));
 const ITEM=Object.fromEntries(UNITS.flatMap(u=>u.items.map(it=>[it.key,{...it,lesson:u.id}])));
-const EXAM_N=60, LESSON_N=7; // 14 lecciones x 7 ≈ 25 min por ronda
+const EXAM_N=60, LESSON_N=5; // 14 lecciones x 5 ≈ 25 min por ronda (con respuestas, reintentos y tips)
 const TYPE={fix:"Corregí el error",mc:"Elegí la opción correcta",fill:"Completá el espacio",order:"Ordená las palabras",listen:"Escuchá",speak:"Hablá",translate:"Traducí al inglés"};
 
 /* ---------- normalización y corrección ---------- */
 const ONES="zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split(" ");
 const TENS=",,twenty,thirty,forty,fifty,sixty,seventy,eighty,ninety".split(",");
 function numWords(n){n=+n;if(n<20)return ONES[n];if(n<100)return TENS[n/10|0]+(n%10?" "+ONES[n%10]:"");if(n<1000)return ONES[n/100|0]+" hundred"+(n%100?" "+numWords(n%100):"");return String(n).split("").map(d=>ONES[d]).join(" ")}
-const CONTR={"i'm":"i am","im":"i am","you're":"you are","youre":"you are","he's":"he is","hes":"he is","she's":"she is","shes":"she is","it's":"it is","its":"it is","we're":"we are","they're":"they are","theyre":"they are","what's":"what is","whats":"what is","who's":"who is","whos":"who is","where's":"where is","wheres":"where is","there's":"there is","theres":"there is","that's":"that is","thats":"that is","isn't":"is not","isnt":"is not","aren't":"are not","arent":"are not","don't":"do not","dont":"do not","doesn't":"does not","doesnt":"does not","i'm not":"i am not","can't":"can not","cant":"can not","cannot":"can not","o'clock":"oclock","o clock":"oclock"};
+const CONTR={"name's":"name is","i'm":"i am","im":"i am","you're":"you are","youre":"you are","he's":"he is","hes":"he is","she's":"she is","shes":"she is","it's":"it is","its":"it is","we're":"we are","they're":"they are","theyre":"they are","what's":"what is","whats":"what is","who's":"who is","whos":"who is","where's":"where is","wheres":"where is","there's":"there is","theres":"there is","that's":"that is","thats":"that is","isn't":"is not","isnt":"is not","aren't":"are not","arent":"are not","don't":"do not","dont":"do not","doesn't":"does not","doesnt":"does not","i'm not":"i am not","can't":"can not","cant":"can not","cannot":"can not","o'clock":"oclock","o clock":"oclock"};
 function norm(s){
   s=String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’‘`´]/g,"'");
   s=s.replace(/o\s*'?\s*clock/g,"oclock").replace(/(\d{1,2}):(\d{2})/g,(m,h,mm)=>numWords(h)+" "+(mm==="00"?"oclock":(+mm<10?"oh "+numWords(+mm):numWords(mm))));
@@ -749,6 +750,7 @@ function grade(it,resp){
 }
 function correctText(it){
   if(it.m)return it.m;
+  if(["translate","speak","fix"].includes(it.t)){const ex=(it.expl||"").match(/<i>(.*?)<\/i>/);if(ex){const s=ex[1].replace(/<[^>]+>/g,"").trim();if(s&&!/…|\.\.\.|\//.test(s)&&grade(it,s)!=="bad")return s}} // modelo con puntuación desde la explicación
   if(it.t==="mc")return it.opts[0];
   if(it.t==="order")return it.a;
   if(it.t==="listen")return it.say;
@@ -807,7 +809,7 @@ const CHEER=["Almost there!","Keep going!","Don't give up!","You can do it!","Tr
 
 /* ---------- datos ---------- */
 let me=null, P=null;
-const slug=n=>norm(n).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40)||"anon";
+const slug=n=>norm(n).replace(/[^\p{L}\p{N}]+/gu,"-").replace(/^-|-$/g,"").slice(0,40)||"anon";
 const ls={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const blank=name=>({name,xp:0,done:{},missed:[],exam:{best:null,last:null,tries:0},updatedAt:0});
 function merge(a,b){ if(!a)return b; if(!b)return a; const o=blank(a.name||b.name); o.xp=Math.max(a.xp||0,b.xp||0);
@@ -831,7 +833,7 @@ function vLogin(){
   app.innerHTML=`<div class="login"><img src="${LOGO}" alt="One2One — You make it real"><h1>Study for My Test</h1><p class="byline">by Celso Mello</p><p class="rescue"><svg class="buoy" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12" fill="none" stroke="#fff" stroke-width="7"/><circle cx="16" cy="16" r="12" fill="none" stroke="#c8202f" stroke-width="7" stroke-dasharray="9.42 9.42" stroke-dashoffset="4.71"/><circle cx="16" cy="16" r="15.5" fill="none" stroke="#14245a" stroke-width="1"/><circle cx="16" cy="16" r="8.5" fill="none" stroke="#14245a" stroke-width="1"/></svg><span>English rescue mode: <b>ON</b></span></p>
   <p class="muted">ID 1 · Unidades 1.1 a 3.4 · escrito, oral y opción múltiple</p>
   <form id="lf" style="display:grid;gap:12px"><label for="nm" class="muted small">Escribí tu nombre para guardar tu progreso</label>
-  <input class="ans" id="nm" autocomplete="given-name" placeholder="Tu nombre" maxlength="30" value="${esc(ls.get("o2o:last")||"")}"><button class="btn red">Empezar</button></form></div>`;
+  <input class="ans" id="nm" autocomplete="given-name" placeholder="Tu nombre" maxlength="30" autofocus value="${esc(ls.get("o2o:last")||"")}"><button class="btn red">Empezar</button></form></div>`;
   $("#lf").onsubmit=e=>{e.preventDefault();login($("#nm").value)}; }
 function vHome(){
   const done=Object.keys(P.done).length, rd=(P.round||[]).length, next=LESSONS.find(l=>!(P.round||[]).includes(l.id));
@@ -918,7 +920,7 @@ function vQ(){
     const mb=$("#micb"); if(mb)mb.onclick=()=>{ if(mb.classList.contains("on")){try{rec?.stop()}catch(e){}return} mb.classList.add("on");mb.textContent="Escuchando…";
       const ok=listen(alts=>{const best=alts.find(t=>grade(it,t)!=="bad")||alts[0];a.value=best;set(best)},st=>{mb.classList.remove("on");mb.textContent="🎤 Tocá y hablá";if(st==="blocked"){mb.remove();$(".hint").innerHTML=DICT}else if(st==="error")$(".hint").textContent="No te escuché. Tocá y hablá de nuevo, más cerca del micrófono."});
       if(!ok){mb.remove();$(".hint").innerHTML=DICT} } }
-  if(it.t==="mc"||it.t==="order")document.onkeydown=e=>{const c=$("#chk");if($("#qc"))return;if(!c){const fb=footin.querySelector(".btn");if(e.key==="Enter"&&fb&&document.activeElement!==fb){e.preventDefault();fb.click()}return}if(e.key==="Enter"&&!c.disabled){e.preventDefault();check()}else if(it.t==="mc"){const b=app.querySelectorAll(".opt")[e.key-1];if(b)b.click()}};
+  if(it.t==="mc"||it.t==="order")document.onkeydown=e=>{const c=$("#chk");if($("#qc")){if(e.key==="Escape")$("#qc .btn.ghost").click();return}if(!c){const fb=footin.querySelector(".btn");if(e.key==="Enter"&&fb&&document.activeElement!==fb){e.preventDefault();fb.click()}return}if(e.key==="Enter"&&!c.disabled){e.preventDefault();check()}else if(it.t==="mc"){const b=app.querySelectorAll(".opt")[e.key-1];if(b)b.click()}};
   window.scrollTo(0,0);
   if(it.t==="listen"||(it.t==="speak"&&it.say))speak(it.say);
   if(it.dlg&&S.lastDlg!==it.dlg){S.lastDlg=it.dlg;setTimeout(()=>playDialog(it.dlg),300)}
@@ -950,7 +952,7 @@ function retryQ(){ if(S.hearts===0){view="end";S.failed=true;return render()} S.
 function nextQ(){ S.retry=false; S.idx++; if(S.idx>=S.queue.length){view="end";return render()} vQ() }
 function quit(){ if($("#qc"))return; const ex=S.mode==="exam";
   [...footin.children].forEach(c=>c.hidden=true);
-  footin.insertAdjacentHTML("beforeend",`<div id="qc" style="display:grid;gap:10px"><p style="margin:0">${ex?"¿Salir del test de prueba? Tu avance queda guardado y podés continuarlo desde el inicio.":"¿Salir de la lección? Vas a perder el avance de esta lección."}</p><button class="btn red" onclick="go('home')">Salir</button><button class="btn ghost" onclick="$('#qc').remove();[...footin.children].forEach(c=>c.hidden=false)">Seguir practicando</button></div>`) }
+  footin.insertAdjacentHTML("beforeend",`<div id="qc" style="display:grid;gap:10px"><p style="margin:0">${ex?"¿Salir del test de prueba? Tu avance queda guardado y podés continuarlo desde el inicio.":"¿Salir de la lección? Vas a perder el avance de esta lección."}</p><button class="btn red" onclick="go('home')">Salir</button><button class="btn ghost" onclick="$('#qc').remove();[...footin.children].forEach(c=>c.hidden=false)">Seguir practicando</button></div>`); $("#qc .btn.ghost").focus() }
 function vEnd(){
   if(S.failed){ save(); app.innerHTML=`<div class="result"><div class="big">♥ 0</div><h2>Te quedaste sin vidas</h2><p class="muted">Los errores quedaron guardados en "Repasar mis errores". Volvé a leer el tip y repetí la lección.</p></div>`;
     showFoot("",`<button class="btn red" onclick="${S.mode==="lesson"?`openTip('${S.lessonId}')`:"startReview()"}">Repetir</button><button class="btn ghost" onclick="go('home')">Volver al inicio</button>`); return }
@@ -963,7 +965,7 @@ function vEnd(){
   app.innerHTML=`<div class="result"><div class="stars" style="font-size:44px">${stars(st)}</div><h2>${S.mode==="lesson"?"¡Lección "+S.lessonId+" completa!":"¡Repaso completo!"}</h2>
   <div class="big" id="xpn" data-pre="+" data-suf=" XP">+0 XP</div>${S.best>=3?`<p style="margin:0"><span class="streak"><b>🔥</b> Mejor racha: ${S.best} seguidas</span></p>`:""}<p class="muted">${S.mistakes?`Te equivocaste ${S.mistakes} ${S.mistakes===1?"vez":"veces"}. Esos ejercicios quedaron en "Repasar mis errores".`:"Sin errores. ¡Perfecto!"}</p></div>`;
   if(roundDone)app.querySelector(".result").insertAdjacentHTML("beforeend",`<div class="tipcard" style="text-align:center"><h2 style="margin:0 0 4px">🎉 ¡Ronda completa!</h2><p class="muted" style="margin:0">Hiciste las ${LESSONS.length} lecciones. ¿Te animás a un test de prueba como el examen, o preferís seguir practicando?</p></div>`);
-  if(roundDone)showFoot("",`<button class="btn red" onclick="startExam()">Hacer el test de prueba (60 preguntas, 15–20 min)</button><button class="btn ghost" onclick="newRound()">Seguir practicando: otra ronda con preguntas nuevas</button><button class="btn ghost" onclick="go('home')">Inicio</button>`); else
+  if(roundDone)showFoot("",`<button class="btn red" onclick="startExam()">Hacer el test de prueba (60 preguntas, 20–25 min)</button><button class="btn ghost" onclick="newRound()">Seguir practicando: otra ronda con preguntas nuevas</button><button class="btn ghost" onclick="go('home')">Inicio</button>`); else
   showFoot("",(nextL?`<button class="btn red" onclick="openTip('${nextL.id}')">Siguiente: ${nextL.id}</button>`:"")+(S.mode==="lesson"||P.missed.length?`<button class="btn ghost" onclick="${S.mode==="lesson"?`openTip('${S.lessonId}')`:"startReview()"}">Repetir</button>`:"")+`<button class="btn ghost" onclick="go('home')">Inicio</button>`);
   sfx("done"); confetti(); countUp($("#xpn"),S.xp) }
 function finishExam(){ const ok=S.results.filter(r=>r.ok).length, pct=Math.round(ok/S.results.length*100);
