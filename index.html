@@ -151,7 +151,7 @@ input.ans{width:100%;box-sizing:border-box;font:inherit;font-size:18px;padding:1
 .lhead .snd{background:none;border:0;font-size:20px;padding:4px}
 #fx{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:50}
 .snd,.lhead .x{min-width:44px;min-height:44px}.tl{min-width:44px}
-@media (max-height:500px){.foot{padding-top:8px}.foot .in{display:flex;gap:8px;align-items:center}.foot .fb{flex:1;min-width:0}.foot .btn{padding:10px 14px;width:auto}.fb p{margin:2px 0}.foot .fb p.small{display:none}}
+@media (max-height:500px) and (orientation:landscape){.foot{padding-top:8px}.foot .in{display:flex;gap:8px;align-items:center}.foot .fb{flex:1;min-width:0}.foot .btn{padding:10px 14px;width:auto;margin-left:auto}.fb p{margin:2px 0}.foot .fb p.small{display:none}}
 @media (min-width:700px){.foot .in{max-width:720px}}
 @media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}
 </style>
@@ -369,7 +369,7 @@ const UNITS = [
   L("I have two sisters and one brother.","<i>I have two sisters and one brother.</i>"),
   SP("Respondé.","Do you have brothers and sisters?",[/^(yes|no|yeah)\b/],"<i>Yes, I do. I have…</i> / <i>No, I don't.</i>"),
   SP("Decí: 'Ellos son mis padres.'",null,["they are my parents"],"<i>They're my parents.</i>"),
-  T("Traducí: No tengo hijos.",[/^i (do not have (any )?(children|kids)|have no (children|kids))$/],"<i>I don't have children/kids.</i>"),
+  T("Traducí: No tengo hijos.",["i do not have children",/^i (do not have (any )?(children|kids)|have no (children|kids))$/],"<i>I don't have children/kids.</i>"),
   ]},
 { id:"3.3", unit:3, title:"Do you have a job?", topic:"Lugares de trabajo, preguntas en presente simple",
   tip:`<b>Preguntas:</b> <i>Do you work? Do you have a job?</i> → <i>Yes, I do. / No, I don't.</i><br><b>Con Wh-:</b> <i>Where <b>do</b> you work?</i> → <i>I work <b>in</b> an office / <b>in</b> a hospital / <b>at</b> home / <b>at</b> a school.</i><br><b>Lugares:</b> office, hospital, school, store, bank, restaurant, factory, hotel.`,
@@ -603,7 +603,7 @@ function vQ(){
   else if(it.t==="order"){ const tiles=$("#tiles"), words=it.a.replace(/[.?!,]/g,"").split(" "), seq=[];
     const upd=()=>{tiles.innerHTML=seq.map((i,k)=>`<button class="tl" data-k="${k}">${esc(words[i])}</button>`).join("");tiles.querySelectorAll(".tl").forEach(b=>b.onclick=()=>{const i=seq.splice(+b.dataset.k,1)[0];app.querySelector(`.bank .tl[data-i="${i}"]`).classList.remove("used");upd()});set(seq.length===words.length?seq.map(i=>words[i]).join(" "):"")};
     app.querySelectorAll(".bank .tl").forEach(b=>b.onclick=()=>{if(b.classList.contains("used"))return;b.classList.add("used");seq.push(+b.dataset.i);upd()}) }
-  else { const a=$("#ans"); a.oninput=()=>set(a.value); a.onkeydown=e=>{if(e.key!=="Enter")return;e.preventDefault();if(chk.isConnected){if(!chk.disabled)check()}else if(!$("#qc"))footin.querySelector(".btn")?.click()}; if(it.t!=="speak")a.focus({preventScroll:true}); a.onfocus=()=>setTimeout(()=>a.scrollIntoView({block:"center",behavior:"smooth"}),300);
+  else { const a=$("#ans"); a.oninput=()=>set(a.value); a.onkeydown=e=>{if(e.key!=="Enter")return;e.preventDefault();if(chk.isConnected){if(!chk.disabled)check()}else if(!$("#qc"))footin.querySelector(".btn")?.click()}; if(it.t!=="speak"||matchMedia("(pointer:fine)").matches)a.focus({preventScroll:true}); a.onfocus=()=>setTimeout(()=>a.scrollIntoView({block:"center",behavior:"smooth"}),300);
     const mb=$("#micb"); if(mb)mb.onclick=()=>{ if(mb.classList.contains("on")){try{rec?.stop()}catch(e){}return} mb.classList.add("on");mb.textContent="Escuchando…";
       const ok=listen(alts=>{const best=alts.find(t=>grade(it,t)!=="bad")||alts[0];a.value=best;set(best)},st=>{mb.classList.remove("on");mb.textContent="🎤 Tocá y hablá";if(st==="blocked"){mb.remove();$(".hint").innerHTML=DICT}else if(st==="error")$(".hint").textContent="No te escuché. Tocá y hablá de nuevo, más cerca del micrófono."});
       if(!ok){mb.remove();$(".hint").innerHTML=DICT} } }
@@ -611,7 +611,7 @@ function vQ(){
   window.scrollTo(0,0);
   if(it.t==="listen"||(it.t==="speak"&&it.say))speak(it.say);
 }
-function showFoot(cls,html){foot.className="foot "+cls;footin.innerHTML=html;foot.hidden=false;requestAnimationFrame(()=>{app.style.paddingBottom=foot.offsetHeight+16+"px"});if(cls&&document.activeElement?.id!=="ans")footin.querySelector(".btn")?.focus({preventScroll:true})}
+function showFoot(cls,html){foot.className="foot "+cls;footin.innerHTML=html;foot.hidden=false;requestAnimationFrame(()=>{app.style.paddingBottom=foot.offsetHeight+16+"px";const a=$("#ans");if(cls&&a&&document.activeElement===a){const d=a.getBoundingClientRect().bottom-foot.getBoundingClientRect().top+8;if(d>0)scrollBy(0,d)}});if(document.activeElement?.id!=="ans")footin.querySelector(".btn:not(:disabled)")?.focus({preventScroll:true})}
 function check(){
   const it=cur(), g=grade(it,resp), firstTry=!S.retry;
   if(S.mode==="exam"){ S.results.push({key:it.key,resp,ok:g!=="bad"}); S.idx++; ls.set("o2o:exam:"+me,S);
@@ -629,7 +629,7 @@ function check(){
     sfx("bad"); S.streak=0; const qb=$("#qb"); if(qb){qb.classList.remove("shake");void qb.offsetWidth;qb.classList.add("shake")}
     if(firstTry){ S.first[it.key]=1; S.mistakes++; if(S.hearts!=null){S.hearts--;const hh=$(".hearts");if(hh){hh.textContent="♥ "+S.hearts;hh.classList.remove("beat");void hh.offsetWidth;hh.classList.add("beat")}} if(!P.missed.includes(it.key))P.missed.push(it.key); S.queue.push(it.key) }
     const ct=correctText(it);
-    showFoot("bad",`<div class="fb"><h3>No es correcto · <span style="font-weight:600">${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p></div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`);
+    showFoot("bad",`<div class="fb"><h3>No es correcto<span style="font-weight:600;white-space:nowrap"> · ${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p></div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`);
     if(ct)speak(ct,.9);
   }
   save();
