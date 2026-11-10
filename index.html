@@ -762,11 +762,12 @@ function correctText(it){
 let voice=null;
 // Android reporta el idioma como en_US, iOS/PC como en-US
 const DICT=/Android/i.test(navigator.userAgent)?"Tocá el campo y usá el <b>🎤 del teclado Gboard</b> para responder hablando.":/iPhone|iPad/i.test(navigator.userAgent)?"Tocá el campo y usá el <b>🎤 del teclado</b> del iPhone para responder hablando.":"Tocá el campo y usá el <b>dictado</b> para responder hablando. Mac: Fn dos veces · Windows: Windows + H.";
-function pickVoice(){const vs=speechSynthesis.getVoices();voice=vs.find(v=>/en[-_]US/i.test(v.lang)&&/samantha|google us|united states|aria|jenny|allison/i.test(v.name))||vs.find(v=>/en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null}
+const NOVELTY=/albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|deranged|hysterical|junior|ralph|kathy|fred|eddy|flo|grand|reed|rocko|sandy|shelley/i; // voces de efectos de iOS/macOS
+function pickVoice(){const vs=speechSynthesis.getVoices().filter(v=>!NOVELTY.test(v.name));voice=vs.find(v=>/en[-_]US/i.test(v.lang)&&/samantha|google us|united states|aria|jenny|allison/i.test(v.name))||vs.find(v=>/en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null}
 if("speechSynthesis" in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
 function speak(text,rate=0.92){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang="en-US";if(voice)u.voice=voice;u.rate=rate;speechSynthesis.speak(u)}catch(e){}}
 // conversaciones: cada persona con otra voz si el equipo tiene más de una; si no, cambia el tono
-function playDialog(id,rate=0.92){ try{ speechSynthesis.cancel(); const vs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)).sort((a,b)=>(/en[-_]US/i.test(b.lang))-(/en[-_]US/i.test(a.lang)));
+function playDialog(id,rate=0.92){ try{ speechSynthesis.cancel(); let vs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)&&!NOVELTY.test(v.name)).sort((a,b)=>(/en[-_]US/i.test(b.lang))-(/en[-_]US/i.test(a.lang))); if(voice)vs=[voice,...vs.filter(v=>v!==voice)];
   const pitch={A:1,B:.78,C:1.28}, idx={A:0,B:1,C:2};
   for(const [who,text] of DIALOGS[id].lines){ const u=new SpeechSynthesisUtterance(text); u.lang="en-US"; u.rate=rate; u.pitch=pitch[who]||1;
     const v=vs.length?vs[(idx[who]||0)%vs.length]:voice; if(v)u.voice=v; speechSynthesis.speak(u) } }catch(e){} }
@@ -794,11 +795,12 @@ function sfx(k){ if(mute)return; try{ actx=actx||new (window.AudioContext||windo
 }catch(e){} }
 function toggleMute(){ mute=!mute; try{localStorage.setItem("o2o:mute",JSON.stringify(mute))}catch(e){} document.querySelectorAll(".snd").forEach(b=>{b.textContent=mute?"🔇":"🔊";b.setAttribute("aria-label",mute?"Activar sonido":"Silenciar")}); if(!mute)sfx("ok") }
 const sndBtn=()=>`<button class="snd" onclick="toggleMute()" aria-label="${mute?"Activar sonido":"Silenciar"}">${mute?"🔇":"🔊"}</button>`;
-function confetti(){ if(matchMedia("(prefers-reduced-motion: reduce)").matches)return; let cv=$("#fx"); if(!cv){cv=document.createElement("canvas");cv.id="fx";document.body.appendChild(cv)}
+let fxRun=0;
+function confetti(){ const run=++fxRun; if(matchMedia("(prefers-reduced-motion: reduce)").matches)return; let cv=$("#fx"); if(!cv){cv=document.createElement("canvas");cv.id="fx";document.body.appendChild(cv)}
   const d=devicePixelRatio||1,W=innerWidth,H=innerHeight;cv.width=W*d;cv.height=H*d;const x=cv.getContext("2d");x.setTransform(d,0,0,d,0,0);const cs=getComputedStyle(document.documentElement),col=[cs.getPropertyValue("--red"),cs.getPropertyValue("--navy"),"#ffffff",cs.getPropertyValue("--gold"),"#2b6cff"];
   const ps=Array.from({length:140},()=>({x:W/2+(Math.random()-.5)*W*.3,y:H*.35,vx:(Math.random()-.5)*12,vy:-Math.random()*13-4,r:Math.random()*6+4,c:col[Math.random()*col.length|0],a:Math.random()*6,s:Math.random()<.3}));
   const t0=performance.now(); (function f(t){x.clearRect(0,0,W,H);for(const p of ps){p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.a+=.2;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;if(p.s){x.beginPath();for(let i=0;i<5;i++){x.lineTo(Math.cos(i*1.257)*p.r,Math.sin(i*1.257)*p.r);x.lineTo(Math.cos(i*1.257+.628)*p.r/2.2,Math.sin(i*1.257+.628)*p.r/2.2)}x.fill()}else x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()}
-    if(t-t0<3200&&innerWidth===W)requestAnimationFrame(f);else x.clearRect(0,0,W,H)})(t0) }
+    if(run===fxRun&&t-t0<3200&&innerWidth===W)requestAnimationFrame(f);else x.clearRect(0,0,W,H)})(t0) }
 function countUp(el,to){ if(!el)return; const t0=performance.now(); (function f(t){const k=Math.min(1,(t-t0)/900);el.textContent=el.dataset.pre+Math.round(to*(1-Math.pow(1-k,3)))+el.dataset.suf;if(k<1)requestAnimationFrame(f)})(t0) }
 const PRAISE=["Awesome!","You nailed it!","Great job!","Perfect!","Well done!","Excellent!","Nice one!","Brilliant!","¡Excelente!","¡Muy bien!"];
 const CHEER=["Almost there!","Keep going!","Don't give up!","You can do it!","Try again!"];
@@ -824,7 +826,7 @@ function render(){ if(view!=="home"&&view!=="login"&&!history.state)try{history.
 function header(){ const done=Object.keys(P.done).length;
   return `<header class="top"><img src="${LOGO}" alt="One2One — You make it real"><div class="who"><span class="muted small">Hola,</span><br><b>${esc(P.name)}</b></div>
   <div class="stats">${sndBtn()}<span class="chip" title="Experiencia">⚡ ${P.xp} XP</span><span class="chip" title="Lecciones completas">✔ ${done}/${LESSONS.length}</span></div></header>` }
-function go(v){const fx=document.getElementById("fx");if(fx)fx.getContext("2d").clearRect(0,0,fx.width,fx.height);view=v;render()}
+function go(v){fxRun++;const fx=document.getElementById("fx");if(fx)fx.getContext("2d").clearRect(0,0,fx.width,fx.height);view=v;render()}
 function vLogin(){
   app.innerHTML=`<div class="login"><img src="${LOGO}" alt="One2One — You make it real"><h1>Study for My Test</h1><p class="byline">by Celso Mello</p><p class="rescue"><svg class="buoy" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12" fill="none" stroke="#fff" stroke-width="7"/><circle cx="16" cy="16" r="12" fill="none" stroke="#c8202f" stroke-width="7" stroke-dasharray="9.42 9.42" stroke-dashoffset="4.71"/><circle cx="16" cy="16" r="15.5" fill="none" stroke="#14245a" stroke-width="1"/><circle cx="16" cy="16" r="8.5" fill="none" stroke="#14245a" stroke-width="1"/></svg><span>English rescue mode: <b>ON</b></span></p>
   <p class="muted">ID 1 · Unidades 1.1 a 3.4 · escrito, oral y opción múltiple</p>
@@ -850,7 +852,7 @@ function vHome(){
 function progressCard(){
   const units=[...new Set(LESSONS.map(l=>l.unit))].map(u=>{const ls_=LESSONS.filter(l=>l.unit===u),st=ls_.reduce((a,l)=>a+(P.done[l.id]||0),0),d=ls_.filter(l=>P.done[l.id]).length;return{u,pct:Math.round(st/(ls_.length*3)*100),d,n:ls_.length}});
   const h=P.exam.hist||[];
-  const bars=h.length?`<svg class="chart" viewBox="0 0 ${Math.max(h.length,4)*44} 110" role="img" aria-label="Notas de tus tests de prueba">
+  const bars=h.length?`<svg class="chart" viewBox="0 -14 ${Math.max(h.length,4)*44} 124" role="img" aria-label="Notas de tus tests de prueba">
     <line x1="0" x2="${Math.max(h.length,4)*44}" y1="${90-0.6*80}" y2="${90-0.6*80}" class="pass"/>
     ${h.map((v,i)=>`<rect x="${i*44+10}" y="${90-v*.8}" width="24" height="${Math.max(v*.8,2)}" rx="4" class="${v>=60?"good":"low"}"/><text x="${i*44+22}" y="${84-v*.8}" text-anchor="middle">${v}%</text><text x="${i*44+22}" y="106" text-anchor="middle" class="ax">#${i+1}</text>`).join("")}
   </svg><span class="muted small">La línea marca el 60% (aprobado).</span>`:`<p class="muted small" style="margin:0">Hacé el test de prueba para ver acá cómo evolucionan tus notas.</p>`;
@@ -939,16 +941,16 @@ function check(){
     sfx("bad"); S.streak=0; const qb=$("#qb"); if(qb){qb.classList.remove("shake");void qb.offsetWidth;qb.classList.add("shake")}
     if(firstTry){ S.first[it.key]=1; S.mistakes++; if(S.hearts!=null){S.hearts--;const hh=$(".hearts");if(hh){hh.textContent="♥ "+S.hearts;hh.classList.remove("beat");void hh.offsetWidth;hh.classList.add("beat")}} if(!P.missed.includes(it.key))P.missed.push(it.key); S.queue.push(it.key) }
     const ct=correctText(it);
-    showFoot("bad",`<div class="fb"><h3>No es correcto<span style="font-weight:600;white-space:nowrap"> · ${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p>${transcript(it)}</div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`);
-    if(ct&&!/[áéíóúñ¿¡]|\b(es|el|la|que|cree|muy|está|chicas|grandes|en|un|una|unos|su|con|sabe|soy|y|biblioteca|realidad|actualmente|futbolista)\b/i.test(ct))speak(ct,.9); // no leer en voz inglesa respuestas en español
+    showFoot("bad",`<div class="fb"><h3>No es correcto <span style="font-weight:600;white-space:nowrap">· ${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p>${transcript(it)}</div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`);
+    if(ct&&!/[ñ¿¡]|(^|[^a-záéíóúñ])(es|el|la|los|las|que|cree|muy|está|chicas|grandes|soy|de|del|en|un|una|unos|su|con|y|sabe|mozo|más|menos|él|sí|tú|qué|cuál|biblioteca|realidad|actualmente|futbolista)(?![a-záéíóúñ])/i.test(ct))speak(ct,.9); // no leer en voz inglesa respuestas en español
   }
   save();
 }
 function retryQ(){ if(S.hearts===0){view="end";S.failed=true;return render()} S.retry=true; vQ() }
 function nextQ(){ S.retry=false; S.idx++; if(S.idx>=S.queue.length){view="end";return render()} vQ() }
-function quit(){ if(S.mode==="exam"){go("home");return} if($("#qc"))return;
+function quit(){ if($("#qc"))return; const ex=S.mode==="exam";
   [...footin.children].forEach(c=>c.hidden=true);
-  footin.insertAdjacentHTML("beforeend",`<div id="qc" style="display:grid;gap:10px"><p style="margin:0">¿Salir de la lección? Vas a perder el avance de esta lección.</p><button class="btn red" onclick="go('home')">Salir</button><button class="btn ghost" onclick="$('#qc').remove();[...footin.children].forEach(c=>c.hidden=false)">Seguir practicando</button></div>`) }
+  footin.insertAdjacentHTML("beforeend",`<div id="qc" style="display:grid;gap:10px"><p style="margin:0">${ex?"¿Salir del test de prueba? Tu avance queda guardado y podés continuarlo desde el inicio.":"¿Salir de la lección? Vas a perder el avance de esta lección."}</p><button class="btn red" onclick="go('home')">Salir</button><button class="btn ghost" onclick="$('#qc').remove();[...footin.children].forEach(c=>c.hidden=false)">Seguir practicando</button></div>`) }
 function vEnd(){
   if(S.failed){ save(); app.innerHTML=`<div class="result"><div class="big">♥ 0</div><h2>Te quedaste sin vidas</h2><p class="muted">Los errores quedaron guardados en "Repasar mis errores". Volvé a leer el tip y repetí la lección.</p></div>`;
     showFoot("",`<button class="btn red" onclick="${S.mode==="lesson"?`openTip('${S.lessonId}')`:"startReview()"}">Repetir</button><button class="btn ghost" onclick="go('home')">Volver al inicio</button>`); return }
@@ -978,6 +980,8 @@ function vExamEnd(){
   showFoot("",`${bad.length?`<button class="btn red" onclick="startReview()">Repasar mis errores</button>`:""}<button class="btn ghost" onclick="startExam()">Repetir test de prueba</button><button class="btn ghost" onclick="go('home')">Inicio</button>`) ; sfx(pct>=60?"done":"ok"); if(pct>=60)confetti(); countUp($("#pctn"),pct) }
 
 /* ---------- arranque ---------- */
+// Safari iOS ignora interactive-widget: subir la barra inferior por encima del teclado
+if(window.visualViewport){const vv=visualViewport,f=()=>foot.style.bottom=Math.max(0,innerHeight-vv.height-vv.offsetTop)+"px";vv.addEventListener("resize",f);vv.addEventListener("scroll",f)}
 me=ls.get("o2o:me"); if(me){P=ls.get("o2o:p:"+me);if(P){P=merge(P,blank(P.name));view="home"}else me=null}
 addEventListener("popstate",()=>{ if(view==="home"||view==="login")return; try{history.pushState(1,"")}catch(e){} view==="q"?quit():go("home") });
 render();
