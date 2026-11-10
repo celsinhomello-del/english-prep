@@ -839,24 +839,24 @@ function vHome(){
   app.innerHTML=header()+`<div class="home"><aside class="side">
   <section class="hero"><div class="stripes" aria-hidden="true"></div><span class="eyebrow">Plan de estudio · examen del miércoles</span><h2>${next?done+" de "+LESSONS.length+" lecciones":"¡Todas las lecciones listas!"}</h2>
   <div class="bar"><i style="width:${done/LESSONS.length*100}%"></i></div>
-  <p class="small">${next?`Siguiente: <b>${next.id} · ${esc(next.title)}</b><br>Hacé las lecciones en orden y cerrá con el simulacro.`:`Hacé el simulacro de ${EXAM_N} preguntas y repasá tus errores.`}</p>
-  <button class="btn red" onclick="${next?`openTip('${next.id}')`:"startExam()"}">${next?"Continuar":"Hacer el simulacro"}</button></section>
-  <section class="score"><div><span class="eyebrow">Puntuación final</span><b class="sc">${P.exam.best!=null?P.exam.best+"%":"—"}</b><span class="muted small">${P.exam.best!=null?"mejor nota del simulacro":"hacé el simulacro para tener tu nota"}</span></div><div><span class="eyebrow">Experiencia</span><b class="sc">${P.xp}</b><span class="muted small">XP · ${done}/${LESSONS.length} lecciones</span></div></section>
+  <p class="small">${next?`Siguiente: <b>${next.id} · ${esc(next.title)}</b><br>Hacé las lecciones en orden y cerrá con el test de prueba.`:`Hacé el test de prueba de ${EXAM_N} preguntas y repasá tus errores.`}</p>
+  <button class="btn red" onclick="${next?`openTip('${next.id}')`:"startExam()"}">${next?"Continuar":"Hacer el test de prueba"}</button></section>
+  <section class="score"><div><span class="eyebrow">Puntuación final</span><b class="sc">${P.exam.best!=null?P.exam.best+"%":"—"}</b><span class="muted small">${P.exam.best!=null?"mejor nota del test de prueba":"hacé el test de prueba para tener tu nota"}</span></div><div><span class="eyebrow">Experiencia</span><b class="sc">${P.xp}</b><span class="muted small">XP · ${done}/${LESSONS.length} lecciones</span></div></section>
   ${progressCard()}
-  <button class="card" onclick="startExam()"><span class="cnum">${EXAM_N}</span><span class="txt"><b>Simulacro de examen</b><span class="muted small">${ls.get("o2o:exam:"+me)?`En curso: ${ls.get("o2o:exam:"+me).idx}/${ls.get("o2o:exam:"+me).queue.length} · tocá para continuar`:P.exam.best!=null?`Mejor nota: ${P.exam.best}% · ${P.exam.tries} ${P.exam.tries===1?"intento":"intentos"}`:"Preguntas de todas las unidades, nota al final"}</span></span></button>
+  <button class="card" onclick="startExam()"><span class="cnum">${EXAM_N}</span><span class="txt"><b>Test de prueba</b><span class="muted small">${ls.get("o2o:exam:"+me)?`En curso: ${ls.get("o2o:exam:"+me).idx}/${ls.get("o2o:exam:"+me).queue.length} · tocá para continuar`:P.exam.best!=null?`Mejor nota: ${P.exam.best}% · ${P.exam.tries} ${P.exam.tries===1?"intento":"intentos"}`:"Preguntas de todas las unidades, nota al final"}</span></span></button>
   <button class="card" ${P.missed.length?"":"disabled"} onclick="startReview()"><span class="cnum">↺</span><span class="txt"><b>Repasar mis errores</b><span class="muted small">${P.missed.length?P.missed.length+" ejercicios pendientes":"Todavía no tenés errores guardados"}</span></span></button>
   <p class="muted small">Banderas: Twemoji (CC-BY 4.0). Tu progreso se guarda en este dispositivo. <button class="lnk" onclick="logout()">Cambiar de usuario</button></p>
   </aside><div class="path">${path}</div></div>` }
 function progressCard(){
   const units=[...new Set(LESSONS.map(l=>l.unit))].map(u=>{const ls_=LESSONS.filter(l=>l.unit===u),st=ls_.reduce((a,l)=>a+(P.done[l.id]||0),0),d=ls_.filter(l=>P.done[l.id]).length;return{u,pct:Math.round(st/(ls_.length*3)*100),d,n:ls_.length}});
   const h=P.exam.hist||[];
-  const bars=h.length?`<svg class="chart" viewBox="0 0 ${Math.max(h.length,4)*44} 110" role="img" aria-label="Notas de tus simulacros">
+  const bars=h.length?`<svg class="chart" viewBox="0 0 ${Math.max(h.length,4)*44} 110" role="img" aria-label="Notas de tus tests de prueba">
     <line x1="0" x2="${Math.max(h.length,4)*44}" y1="${90-0.6*80}" y2="${90-0.6*80}" class="pass"/>
     ${h.map((v,i)=>`<rect x="${i*44+10}" y="${90-v*.8}" width="24" height="${Math.max(v*.8,2)}" rx="4" class="${v>=60?"good":"low"}"/><text x="${i*44+22}" y="${84-v*.8}" text-anchor="middle">${v}%</text><text x="${i*44+22}" y="106" text-anchor="middle" class="ax">#${i+1}</text>`).join("")}
-  </svg><span class="muted small">La línea marca el 60% (aprobado).</span>`:`<p class="muted small" style="margin:0">Hacé el simulacro para ver acá cómo evolucionan tus notas.</p>`;
+  </svg><span class="muted small">La línea marca el 60% (aprobado).</span>`:`<p class="muted small" style="margin:0">Hacé el test de prueba para ver acá cómo evolucionan tus notas.</p>`;
   return `<section class="prog"><span class="eyebrow">Tu progreso</span><p class="small" style="margin:4px 0 8px">Ronda ${(P.rounds||0)+1}: <b>${(P.round||[]).length}/${LESSONS.length}</b> lecciones · ${LESSON_N} preguntas cada una (~25 min la ronda)</p>
     ${units.map(x=>`<div class="urow"><b>Unit ${x.u}</b><div class="ubar" aria-label="${x.pct}%"><i style="width:${x.pct}%"></i></div><span class="muted small">${x.pct}%</span></div>`).join("")}
-    <span class="eyebrow" style="margin-top:8px">Notas del simulacro</span>${bars}</section>` }
+    <span class="eyebrow" style="margin-top:8px">Notas del test de prueba</span>${bars}</section>` }
 function logout(){ls.set("o2o:me",null);me=null;go("login")}
 /* ---------- sesión de lección ---------- */
 function openTip(id){ const l=LESSONS.find(x=>x.id===id); S={mode:"lesson",lesson:l}; view="tip"; render() }
@@ -968,11 +968,11 @@ function vExamEnd(){
   const bad=S.results.filter(r=>!r.ok), ok=S.results.length-bad.length, pct=Math.round(ok/S.results.length*100);
   const weak={}; bad.forEach(r=>{const l=ITEM[r.key].lesson;weak[l]=(weak[l]||0)+1});
   const wk=Object.entries(weak).sort((a,b)=>b[1]-a[1]);
-  app.innerHTML=`<div class="result"><p class="muted" style="margin:0">Simulacro de examen</p><div class="big" id="pctn" data-pre="" data-suf="%">0%</div><h2>${ok} de ${S.results.length} correctas</h2>${S.record?'<p style="margin:0"><span class="streak"><b>🏆</b> ¡Nuevo récord!</span></p>':""}
+  app.innerHTML=`<div class="result"><p class="muted" style="margin:0">Test de prueba</p><div class="big" id="pctn" data-pre="" data-suf="%">0%</div><h2>${ok} de ${S.results.length} correctas</h2>${S.record?'<p style="margin:0"><span class="streak"><b>🏆</b> ¡Nuevo récord!</span></p>':""}
   <p class="muted">${pct>=85?"¡Listo para el examen!":pct>=70?"Muy bien. Repasá los temas marcados.":pct>=60?"¡Aprobado! Repasá los temas marcados para subir la nota.":"Repasá los temas marcados y volvé a intentarlo."}</p>
   ${wk.length?`<div><p class="small muted" style="margin:0 0 6px">Temas para repasar (errores)</p>${wk.map(([l,n])=>`<span class="wkpill">${l} · ${esc(LESSONS.find(x=>x.id===l).title)} (${n})</span>`).join("")}</div>`:""}
   ${bad.length?`<h3 style="text-align:left;margin-top:10px">Tus errores</h3><div class="review">${bad.map(r=>{const it=ITEM[r.key],ct=correctText(it);return `<div><span class="small muted">${it.lesson} · ${TYPE[it.t]}</span><br><b>${esc(it.q)}</b>${it.say&&it.t==="speak"?`<br><i>“${esc(it.say)}”</i>`:""}<br><span style="color:var(--bad)">Tu respuesta: ${esc(r.resp||"—")}</span>${ct?`<br><span style="color:var(--ok)">Correcta: ${esc(ct)}</span>`:""}<br><span class="small">${it.expl}</span>${transcript(it)}</div>`}).join("")}</div>`:""}</div>`;
-  showFoot("",`${bad.length?`<button class="btn red" onclick="startReview()">Repasar mis errores</button>`:""}<button class="btn ghost" onclick="startExam()">Repetir simulacro</button><button class="btn ghost" onclick="go('home')">Inicio</button>`) ; sfx(pct>=60?"done":"ok"); if(pct>=60)confetti(); countUp($("#pctn"),pct) }
+  showFoot("",`${bad.length?`<button class="btn red" onclick="startReview()">Repasar mis errores</button>`:""}<button class="btn ghost" onclick="startExam()">Repetir test de prueba</button><button class="btn ghost" onclick="go('home')">Inicio</button>`) ; sfx(pct>=60?"done":"ok"); if(pct>=60)confetti(); countUp($("#pctn"),pct) }
 
 /* ---------- arranque ---------- */
 me=ls.get("o2o:me"); if(me){P=ls.get("o2o:p:"+me);if(P){P=merge(P,blank(P.name));view="home"}else me=null}
