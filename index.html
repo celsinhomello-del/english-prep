@@ -926,6 +926,8 @@ function vQ(){
   if(it.dlg&&S.lastDlg!==it.dlg){S.lastDlg=it.dlg;setTimeout(()=>playDialog(it.dlg),300)}
 }
 function showFoot(cls,html){foot.className="foot "+cls;footin.innerHTML=html;foot.hidden=false;requestAnimationFrame(()=>{app.style.paddingBottom=foot.offsetHeight+16+"px";const a=$("#ans");if(cls&&a&&document.activeElement===a){const d=a.getBoundingClientRect().bottom-foot.getBoundingClientRect().top+8;if(d>0)scrollBy(0,d)}});if(document.activeElement?.id!=="ans")footin.querySelector(".btn:not(:disabled)")?.focus({preventScroll:true})}
+const ES_RE=/[ñ¿¡]|(^|[^a-záéíóúñ])(es|el|la|los|las|que|cree|muy|está|chicas|grandes|soy|de|del|en|un|una|unos|su|con|y|sabe|mozo|más|menos|él|sí|tú|qué|cuál|biblioteca|realidad|actualmente|futbolista)(?![a-záéíóúñ])/i;
+function ansBtns(){ return S.ans?`<div class="say"><button class="spk" aria-label="Escuchar la respuesta" onclick="speak(S.ans)">🔊</button><button class="spk slow" aria-label="Escuchar la respuesta lento" onclick="speak(S.ans,.6)">lento</button></div>`:"" }
 function check(){
   const it=cur(), g=grade(it,resp), firstTry=!S.retry;
   if(S.mode==="exam"){ S.results.push({key:it.key,resp,ok:g!=="bad"}); S.idx++; ls.set("o2o:exam:"+me,S);
@@ -937,14 +939,15 @@ function check(){
     const streakTag=firstTry&&st>=3?`<span class="streak"><b>🔥</b> ${st} seguidas${bonus?` · +${bonus} XP`:""}${st>=5?" · On fire!":""}</span>`:"";
     sfx(bonus?"streak":"ok"); $("#qb")?.classList.add("pop");
     const note=g==="typo"?`<p>Casi perfecto, revisá la ortografía: <b>${esc(correctText(it))}</b></p>`:(it.t==="speak"||it.t==="translate"||it.t==="fix")&&correctText(it)?`<p class="small">Modelo: <i>${esc(correctText(it))}</i></p>`:"";
-    showFoot("ok",`<div class="fb"><h3>${PRAISE[Math.random()*PRAISE.length|0]}</h3>${streakTag}${note}</div><button class="btn" onclick="nextQ()">Continuar</button>`); if(it.dlg&&$("#qb"))$("#qb").insertAdjacentHTML("beforeend",transcript(it));
-    if(["order","translate","speak","fix"].includes(it.t)&&correctText(it))speak(correctText(it));
+    S.ans=it.t==="speak"&&resp?resp:["order","translate","fix"].includes(it.t)?correctText(it):null; // en "hablar" se repite lo que dijo el alumno
+    showFoot("ok",`<div class="fb"><h3>${PRAISE[Math.random()*PRAISE.length|0]}</h3>${streakTag}${note}${ansBtns()}</div><button class="btn" onclick="nextQ()">Continuar</button>`); if(it.dlg&&$("#qb"))$("#qb").insertAdjacentHTML("beforeend",transcript(it));
+    if(S.ans)speak(S.ans);
   } else {
     sfx("bad"); S.streak=0; const qb=$("#qb"); if(qb){qb.classList.remove("shake");void qb.offsetWidth;qb.classList.add("shake")}
     if(firstTry){ S.first[it.key]=1; S.mistakes++; if(S.hearts!=null){S.hearts--;const hh=$(".hearts");if(hh){hh.textContent="♥ "+S.hearts;hh.classList.remove("beat");void hh.offsetWidth;hh.classList.add("beat")}} if(!P.missed.includes(it.key))P.missed.push(it.key); S.queue.push(it.key) }
-    const ct=correctText(it);
-    showFoot("bad",`<div class="fb"><h3>No es correcto <span style="font-weight:600;white-space:nowrap">· ${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p></div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`); if(it.dlg&&$("#qb"))$("#qb").insertAdjacentHTML("beforeend",transcript(it));
-    if(ct&&!/[ñ¿¡]|(^|[^a-záéíóúñ])(es|el|la|los|las|que|cree|muy|está|chicas|grandes|soy|de|del|en|un|una|unos|su|con|y|sabe|mozo|más|menos|él|sí|tú|qué|cuál|biblioteca|realidad|actualmente|futbolista)(?![a-záéíóúñ])/i.test(ct))speak(ct,.9); // no leer en voz inglesa respuestas en español
+    const ct=correctText(it); S.ans=ct&&!/[\/@]/.test(ct)&&!ES_RE.test(ct)?ct:null; // no leer en voz inglesa respuestas en español ni símbolos
+    showFoot("bad",`<div class="fb"><h3>No es correcto <span style="font-weight:600;white-space:nowrap">· ${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p>${ansBtns()}</div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`); if(it.dlg&&$("#qb"))$("#qb").insertAdjacentHTML("beforeend",transcript(it));
+    if(S.ans)speak(S.ans,.9);
   }
   save();
 }
