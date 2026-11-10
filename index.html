@@ -1,0 +1,685 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#14245a"><link rel="icon" href="logo.png"><link rel="apple-touch-icon" href="logo.png"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>One2One English Prep</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Lexend:wght@400;500;600&display=swap">
+<style>
+/* Layout: columna única tipo app (máx 560px), barra de acción fija abajo en lecciones */
+:root{
+  --navy:#14245a; --red:#c8202f; --bg:#f4f6fb; --card:#ffffff; --fg:#121a33; --muted:#5d6788; --line:#dde2ef;
+  --ok:#1d8f4e; --okbg:#e3f6ea; --bad:#c22636; --badbg:#fde7e9; --tile:#eef1f8; --gold:#b07d00; --on:#fff;
+  --display:"Montserrat",system-ui,sans-serif; --body:"Lexend",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --navy:#8fa6ff; --red:#ff5a66; --bg:#0c1230; --card:#151d42; --fg:#eef1fb; --muted:#a2abcb; --line:#2a3566;
+  --ok:#4fd28a; --okbg:#123a29; --bad:#ff6b77; --badbg:#3e1520; --tile:#1d2753; --gold:#ffc83d; --on:#0c1230; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --navy:#8fa6ff; --red:#ff5a66; --bg:#0c1230; --card:#151d42; --fg:#eef1fb; --muted:#a2abcb; --line:#2a3566;
+  --ok:#4fd28a; --okbg:#123a29; --bad:#ff6b77; --badbg:#3e1520; --tile:#1d2753; --gold:#ffc83d; --on:#0c1230; color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--body)}
+.wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 120px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+.btn{border:0;border-radius:14px;padding:14px 18px;font-weight:600;background:var(--navy);color:var(--bg);box-shadow:0 4px 0 color-mix(in srgb,var(--navy) 60%,#000);width:100%;font-size:17px}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 color-mix(in srgb,var(--navy) 60%,#000)}
+.btn.red{background:var(--red);box-shadow:0 4px 0 color-mix(in srgb,var(--red) 60%,#000);color:var(--on)}
+.btn.ghost{background:transparent;color:var(--navy);box-shadow:none;border:2px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+input.ans{width:100%;box-sizing:border-box;font:inherit;font-size:18px;padding:14px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--fg)}
+.top{display:flex;align-items:center;gap:12px;padding-block:6px 14px;flex-wrap:wrap}
+.top img{width:52px;height:52px;border-radius:50%;background:#fff}
+.top .who{flex:1;min-width:0}
+.top .who b{font-family:var(--display);font-size:17px}
+.stats{display:flex;gap:10px;font-weight:600;font-variant-numeric:tabular-nums}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:14px;white-space:nowrap}
+.hero{background:var(--navy);color:var(--bg);border-radius:20px;padding:18px;display:grid;gap:10px;margin-bottom:22px}
+.hero h2{font-size:20px}
+.bar{height:10px;border-radius:99px;background:color-mix(in srgb,var(--bg) 25%,transparent);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--red);border-radius:99px;transition:width .3s}
+.home{display:grid;gap:22px}
+.side{display:grid;gap:12px;align-content:start}
+.path{min-width:0}
+.unit{margin:22px 0 10px;display:flex;align-items:center;gap:12px}
+.path .unit:first-child{margin-top:0}
+.unit .un{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--red);color:#fff;font-family:var(--display);font-weight:900;font-size:20px}
+.unit h3{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--navy)}
+.ugrid{display:grid;gap:8px}
+.lesson .go{font-size:13px;font-weight:600;color:var(--red);white-space:nowrap}
+.card{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:left;width:100%}
+.card:disabled{opacity:.55;cursor:default}
+.cnum{flex:none;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-family:var(--display);font-weight:900;background:var(--navy);color:var(--bg)}
+.card .txt{flex:1;min-width:0}.card b{display:block}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.score>div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:grid}
+.score .eyebrow{color:var(--red);font-weight:600}
+.sc{font-family:var(--display);font-weight:900;font-size:30px;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1.2}
+.lnk{border:0;background:none;color:var(--navy);text-decoration:underline;padding:0;font-size:inherit}
+.hero{position:relative;overflow:hidden}
+.hero>*{position:relative}
+.stripes{position:absolute!important;right:-50px;bottom:-70px;width:180px;height:180px;border-radius:50%;background:repeating-linear-gradient(0deg,color-mix(in srgb,var(--red) 55%,transparent) 0 14px,transparent 14px 28px);opacity:.35}
+.eyebrow{font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.8}
+@media (min-width:700px){.wrap.mid{max-width:720px}.foot .in{max-width:720px}.qtext{font-size:26px}.lesson{padding:14px 16px}}
+@media (min-width:960px){.wrap.wide{max-width:1120px}
+ .home{grid-template-columns:minmax(0,1fr) 360px;gap:32px;align-items:start}
+ .side{grid-column:2;grid-row:1;position:sticky;top:16px}
+ .path{grid-column:1;grid-row:1}
+ .ugrid{grid-template-columns:1fr 1fr}
+ .top{padding-block:14px 22px}}
+.lesson{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:8px;width:100%;text-align:left}
+.lesson .num{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;background:var(--tile);color:var(--navy);font-variant-numeric:tabular-nums}
+.lesson.done .num{background:var(--ok);color:#fff}
+.lesson.next{border:2px solid var(--red)}
+.lesson .txt{flex:1;min-width:0}
+.lesson .txt b{display:block;font-weight:600}
+.stars{color:var(--gold);letter-spacing:2px;font-size:14px}
+.special{display:grid;gap:10px;margin-top:26px}
+/* lección */
+.lhead{display:flex;align-items:center;gap:12px;padding-block:6px 18px}
+.lhead .x{border:0;background:none;font-size:26px;color:var(--muted);padding:4px 8px}
+.lhead .bar{flex:1;background:var(--line)}
+.hearts{color:var(--red);font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.qtype{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);font-weight:600;margin-bottom:6px}
+.qtext{font-family:var(--display);font-weight:800;font-size:22px;line-height:1.25;margin-bottom:18px}
+.qtext .blank{display:inline-block;min-width:60px;border-bottom:3px solid var(--navy)}
+.say{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.spk{border:0;border-radius:16px;background:var(--navy);color:var(--bg);width:64px;height:64px;font-size:26px;box-shadow:0 4px 0 color-mix(in srgb,var(--navy) 60%,#000)}
+.spk.slow{width:48px;height:48px;font-size:14px;background:var(--tile);color:var(--navy);box-shadow:none;border:2px solid var(--line)}
+.saytxt{font-size:18px;font-weight:500;min-width:0}
+.opts{display:grid;gap:10px}
+.opt{border:2px solid var(--line);border-bottom-width:4px;background:var(--card);border-radius:14px;padding:14px;text-align:left;font-size:17px}
+.opt[aria-pressed="true"]{border-color:var(--navy);background:var(--tile)}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;padding:10px 0;border-bottom:2px solid var(--line);margin-bottom:14px}
+.bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tl{border:2px solid var(--line);border-bottom-width:4px;background:var(--card);border-radius:12px;padding:8px 12px;font-size:17px}
+.tl.used{visibility:hidden}
+.mic{display:flex;gap:10px;align-items:stretch;margin-top:10px}
+.mic .btn{width:auto;flex:none}
+.mic .btn.on{background:var(--red);color:#fff}
+.hint{font-size:13px;color:var(--muted);margin-top:8px}
+.foot{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));padding-top:14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.foot .in{max-width:560px;margin:0 auto;display:grid;gap:10px}
+.foot.ok{background:var(--okbg);border-color:transparent}
+.foot.bad{background:var(--badbg);border-color:transparent}
+.fb h3{font-size:19px}
+.foot.ok .fb h3{color:var(--ok)} .foot.bad .fb h3{color:var(--bad)}
+.fb p{margin:4px 0 0}
+.foot.ok .btn{background:var(--ok);box-shadow:0 4px 0 color-mix(in srgb,var(--ok) 60%,#000);color:var(--on)}
+.foot.bad .btn{background:var(--bad);box-shadow:0 4px 0 color-mix(in srgb,var(--bad) 60%,#000);color:var(--on)}
+.tipcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;line-height:1.7}
+.tipcard i{color:var(--navy);font-style:normal;font-weight:600}
+.result{text-align:center;display:grid;gap:14px;padding-top:30px}
+.big{font-family:var(--display);font-weight:900;font-size:56px;color:var(--navy);font-variant-numeric:tabular-nums}
+.review{text-align:left;display:grid;gap:8px}
+.review div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.login{min-height:80vh;display:grid;align-content:center;gap:18px;text-align:center}
+.login img{width:180px;height:180px;margin:0 auto;border-radius:50%;background:#fff;box-shadow:0 6px 24px color-mix(in srgb,var(--navy) 25%,transparent)}
+.login h1{font-size:26px;color:var(--navy)}
+.wkpill{display:inline-block;background:var(--badbg);color:var(--bad);border-radius:99px;padding:2px 10px;margin:2px;font-size:13px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap" id="app"></div>
+<div class="foot" id="foot" hidden><div class="in" id="footin"></div></div>
+
+<script>
+// Banco de ejercicios ID 1 (Richmond), unidades 1.1–4.4.
+// M=opción múltiple (la 1ª opción es la correcta), F=completar, O=ordenar, L=escuchar y escribir,
+// S=hablar (say=lo que la app pregunta en voz alta), T=traducir escribiendo. Respuestas: strings o RegExp sobre texto normalizado.
+const NAME = "[a-z]+";
+const UNITS = [
+{ id:"1.1", unit:1, title:"What's your name?", topic:"Saludos y números 1–12",
+  tip:`<b>Presentarte:</b> <i>Hi! I'm Ana.</i> / <i>My name is Ana.</i><br><b>Preguntar:</b> <i>What's your name?</i> (what's = what is)<br><b>Saludos:</b> Hello, Hi, Good morning (mañana), Good afternoon (tarde), Good evening (noche). <i>Good night</i> es para despedirse.<br><b>Números 1–12:</b> one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve.`,
+  items:[
+  M("¿Cómo preguntás el nombre de alguien?",["What's your name?","What your name?","How is your name?"],"En inglés se usa <i>What</i>, no <i>How</i>, y siempre lleva el verbo: What <b>is</b> your name?"),
+  M("Son las 9 de la mañana. Saludás:",["Good morning!","Good night!","Good evening!"],"<i>Good morning</i> va hasta el mediodía. <i>Good night</i> solo se usa para despedirse."),
+  M("¿Cuál es el número 11?",["eleven","twelve","seven"],"11 = eleven, 12 = twelve."),
+  F("Hi! ___ Paula.",["i am","im"],"Para presentarte: <i>I'm</i> o <i>I am</i> + nombre."),
+  F("My ___ is Carlos.",["name"],"<i>My name is…</i> = Mi nombre es…"),
+  O("Ordená la pregunta","What is your name?"),
+  O("Ordená la frase","Nice to meet you."),
+  L("Hello, my name is Sam.","Escuchá de nuevo: <i>Hello, my name is Sam.</i>"),
+  L("eight, nine, ten","Números: eight (8), nine (9), ten (10)."),
+  SP("Respondé la pregunta con tu nombre.","What's your name?",[new RegExp(`^((hi|hello|hey|good (morning|afternoon|evening)) )?(my name is|my names|i am) ${NAME}`)],"Respondé con <i>My name is…</i> o <i>I'm…</i>"),
+  SP("Decí en inglés: 'Mucho gusto.'",null,["nice to meet you","nice to meet you too","pleased to meet you","it is nice to meet you","nice meeting you"],"<i>Nice to meet you.</i>"),
+  SP("Contá en voz alta del 1 al 5.",null,["one two three four five"],"one, two, three, four, five"),
+  ]},
+{ id:"1.2", unit:1, title:"Where are you from?", topic:"Origen y presentar a un amigo",
+  tip:`<b>Preguntar:</b> <i>Where are you from?</i><br><b>Responder:</b> <i>I'm from Paraguay.</i><br><b>Presentar a alguien:</b> <i>This is my friend, Leo. He's from Brazil.</i><br>Respuesta: <i>Nice to meet you!</i>`,
+  items:[
+  M("¿Cómo preguntás de dónde es alguien?",["Where are you from?","Where you are from?","From where you are?"],"Orden de pregunta: Where + <b>are</b> + you + from?"),
+  M("Presentás a tu amiga María:",["This is María.","He is María.","These is María."],"Para presentar a una persona: <i>This is…</i>"),
+  M("'I'm from Brazil.' significa:",["Soy de Brasil.","Voy a Brasil.","Vivo en Brasil."],"<i>be from</i> = ser de (origen)."),
+  F("I'm ___ Paraguay.",["from"],"Origen: <i>I'm <b>from</b>…</i>"),
+  F("Where ___ you from?",["are"],"Con <i>you</i> el verbo be es <b>are</b>."),
+  O("Ordená la pregunta","Where are you from?"),
+  O("Ordená la frase","He is from Brazil too."),
+  L("I'm from Paraguay.","<i>I'm from Paraguay.</i>"),
+  SP("Respondé de dónde sos.","Where are you from?",[/^(i am|im) from [a-z ]+/],"<i>I'm from…</i> + país o ciudad."),
+  SP("Presentá a tu amigo Leo.",null,[/^this is (my friend )?leo/],"<i>This is my friend, Leo.</i>"),
+  T("Traducí: Soy de Brasil.",["i am from brazil"],"<i>I'm from Brazil.</i>"),
+  ]},
+{ id:"1.3", unit:1, title:"What's this in English?", topic:"a / an, verbo be, objetos del aula",
+  tip:`<b>a / an:</b> <i>a</i> antes de sonido consonante (a book, a pen); <i>an</i> antes de sonido vocal (an eraser, an apple, an umbrella). Cuenta el <b>sonido</b>, no la letra: <i>a university</i> (/yu/), <i>an hour</i>.<br><b>Be (+):</b> It's a pen. You're a student.<br><b>Be (−):</b> It isn't a book. (isn't = is not)<br><b>Pregunta:</b> <i>What's this in English?</i> → <i>It's a notebook.</i><br>Objetos: book, pen, pencil, notebook, eraser, desk, chair, board, bag, phone.`,
+  items:[
+  M("Completá: It's ___ eraser.",["an","a","the"],"<i>eraser</i> empieza con sonido vocal → <b>an</b>."),
+  M("Completá: It's ___ notebook.",["a","an","—"],"<i>notebook</i> empieza con consonante → <b>a</b>."),
+  M("Completá: It's ___ umbrella.",["an","a","—"],"<i>umbrella</i> empieza con sonido vocal → <b>an</b>."),
+  M("Completá: It's ___ university.",["a","an","—"],"<i>university</i> suena /yu/ (consonante) → <b>a</b>. Cuenta el sonido, no la letra."),
+  M("¿Cuál es la forma corta de 'it is not'?",["it isn't","it not","it's no"],"is not = <b>isn't</b>."),
+  M("¿Cuál es la forma corta de 'you are'?",["you're","your","you's"],"<i>you're</i> = you are. <i>your</i> = tu/su (posesivo)."),
+  F("What's this in English? — It's ___ pen.",["a"],"<i>pen</i> empieza con consonante → <b>a</b>."),
+  F("It ___ a book. It's a notebook. (negativo)",["isnt","is not"],"Negativo de <i>it is</i>: <b>it isn't</b>."),
+  O("Ordená la pregunta","What is this in English?"),
+  O("Ordená la frase","It is not a chair."),
+  L("It's an apple.","<i>It's an apple.</i> — <i>an</i> porque apple empieza con vocal."),
+  SP("Preguntá cómo se dice algo en inglés.",null,["what is this in english","what is that in english","what is it in english","how do you say this in english"],"<i>What's this in English?</i>"),
+  SP("Decí: 'Es una lapicera.'",null,["it is a pen"],"<i>It's a pen.</i>"),
+  T("Traducí: No es un libro.",["it is not a book","its not a book"],"<i>It isn't a book.</i>"),
+  ]},
+{ id:"1.4", unit:1, title:"What's your phone number?", topic:"Alfabeto, deletrear, preguntas con be",
+  tip:`<b>Pregunta con be:</b> se invierte el orden → <i>Is it…? Are you…?</i><br><i>Is your name Ana? — Yes, it is. / No, it isn't.</i><br><b>Deletrear:</b> <i>How do you spell that?</i> → <i>M-E-L-L-O.</i><br><b>Teléfono:</b> <i>What's your phone number?</i> → <i>It's 0981 234 567.</i> El 0 se dice <i>zero</i> u <i>oh</i>.<br>Letras difíciles: A /ei/, E /i/, I /ai/, G /yi/, J /yei/, H /eich/, W /dabliu/, Y /uai/.`,
+  items:[
+  M("¿Cómo pedís que deletreen algo?",["How do you spell that?","How you spell that?","What spell is that?"],"<i>How do you spell that?</i>"),
+  M("Pregunta correcta:",["Is your name Ana?","Your name is Ana?","Is Ana your name is?"],"En preguntas con be, el verbo va primero: <b>Is</b> your name Ana?"),
+  M("Respuesta corta correcta a 'Are you a student?'",["Yes, I am.","Yes, I'm.","Yes, I are."],"En respuestas cortas afirmativas no se contrae: <i>Yes, I am.</i>"),
+  M("La letra 'I' en inglés suena como:",["/ai/","/i/","/ei/"],"I = /ai/, E = /i/, A = /ei/."),
+  F("What's your phone ___?",["number"],"<i>phone number</i> = número de teléfono."),
+  F("___ you from Brazil? — Yes, I am.",["are"],"Pregunta con you: <b>Are</b> you…?"),
+  O("Ordená la pregunta","What is your phone number?"),
+  O("Ordená la pregunta","How do you spell your name?"),
+  L("It's zero nine eight one, two three four.","Teléfono: zero nine eight one, two three four.",[/^(it is )?((zero|oh) nine eight one|nine hundred eighty one) (two three four|two hundred thirty four)$/]),
+  L("B-R-O-W-N","Deletreo: B-R-O-W-N.",["brown"]),
+  SP("Deletreá la palabra BOOK letra por letra.",null,["b o o k","bo ok","book"],"B-O-O-K."),
+  SP("Respondé deletreando.","How do you spell your last name?",[/^([a-z] ){2,}[a-z]$/,/^(it is )?[a-z]+$/],"Letra por letra: <i>M-E-L-L-O.</i>"),
+  T("Traducí: ¿Cuál es tu apellido?",["what is your last name","what is your surname","what is your family name"],"<i>What's your last name?</i> (EE.UU.)"),
+  SP("Respondé la pregunta.","Are you a student?",[/^(yes i am|no i am not)\b/],"<i>Yes, I am.</i> o <i>No, I'm not.</i>"),
+  T("Traducí: ¿Cuál es tu número de teléfono?",["what is your phone number","what is your telephone number","what is your number","what is your cell phone number"],"<i>What's your phone number?</i>"),
+  ]},
+{ id:"1.5", unit:1, title:"What's your email address?", topic:"Email, cognados, How are you?",
+  tip:`<b>Email:</b> <i>What's your email address?</i> → <i>It's ana dot lopez at gmail dot com.</i><br>@ = <b>at</b>, . = <b>dot</b>, _ = underscore, - = dash.<br><b>How are you today?</b> → <i>I'm fine, thanks. And you?</i> / <i>Great! / OK. / Not bad.</i><br><b>Cognados:</b> palabras parecidas al español: hospital, restaurant, hotel, important, computer, telephone, family.`,
+  items:[
+  M("En un email, '@' se dice:",["at","dot","arroba"],"@ = <b>at</b>."),
+  M("En un email, '.' se dice:",["dot","point","at"],". = <b>dot</b>."),
+  M("Respuesta a 'How are you today?'",["I'm fine, thanks. And you?","I'm 30 years.","I'm from Paraguay."],"<i>How are you?</i> pregunta cómo estás: <i>I'm fine, thanks.</i>"),
+  M("¿Cuál es un cognado de 'computadora'?",["computer","counter","commuter"],"computer ≈ computadora."),
+  F("What's your email ___?",["address"],"<i>email address</i> = dirección de correo."),
+  F("How ___ you today?",["are"],"<i>How are you?</i>"),
+  O("Ordená la pregunta","What is your email address?"),
+  O("Ordená la pregunta","How are you today?"),
+  L("It's sam at gmail dot com.","<i>sam at gmail dot com</i> = sam@gmail.com",[/^(it is )?sam at gmail (dot )?com$/]),
+  SP("Respondé.","How are you today?",[/^(i am )?(fine|great|ok|okay|good|very well|not bad)\b/],"<i>I'm fine, thanks. And you?</i>"),
+  SP("Decí este email en voz alta: ana@gmail.com",null,[/^ann?a at gmail (dot )?com$/],"<i>ana at gmail dot com</i>"),
+  T("Traducí: ¿Cuál es tu correo electrónico?",["what is your email address","what is your email","what is your e mail address","what is your e mail"],"<i>What's your email address?</i>"),
+  ]},
+{ id:"2.1", unit:2, title:"Are you a student?", topic:"Países, nacionalidades, I am / you are, números 13–20",
+  tip:`<b>I am / You are:</b> I'm a student. You're Brazilian. <b>Negativo:</b> I'm not. You aren't.<br><b>Pronombres:</b> I, you, he, she, it, we, they.<br><b>País → nacionalidad:</b> Brazil → Brazilian, Paraguay → Paraguayan, Argentina → Argentinian, Mexico → Mexican, the USA → American, Spain → Spanish, Japan → Japanese, England → English, Peru → Peruvian.<br>Las nacionalidades van con <b>mayúscula</b>.<br><b>13–20:</b> thirteen, fourteen, fifteen, sixteen, seventeen, eighteen, nineteen, twenty.<br><b>Plurales:</b> book → books, country → countries, class → classes.`,
+  items:[
+  M("Nacionalidad de alguien de Brasil:",["Brazilian","Brazilish","Brasilian"],"Brazil → <b>Brazilian</b> (con z y mayúscula)."),
+  M("Nacionalidad de alguien de Japón:",["Japanese","Japanian","Japonese"],"Japan → <b>Japanese</b>."),
+  M("Negativo correcto:",["I'm not a teacher.","I amn't a teacher.","I no am a teacher."],"Negativo de I am: <b>I'm not</b>."),
+  M("15 en inglés:",["fifteen","fiveteen","fifty"],"15 = <b>fifteen</b>; 50 = fifty."),
+  M("Plural de 'country':",["countries","countrys","countryes"],"Consonante + y → <b>-ies</b>."),
+  F("You ___ a student. (afirmativo)",["are","re"],"you + <b>are</b>."),
+  F("She's from Mexico. She's ___.",["mexican"],"Mexico → <b>Mexican</b>."),
+  O("Ordená la frase","I am not a teacher."),
+  O("Ordená la pregunta","Are you a student?"),
+  L("thirteen, fourteen, eighteen","13, 14, 18: thirteen, fourteen, eighteen."),
+  SP("Respondé.","Are you a student?",[/^(yes i am|no i am not)\b/],"<i>Yes, I am.</i> / <i>No, I'm not.</i>"),
+  SP("Decí: 'Soy brasileño.'",null,["i am brazilian"],"<i>I'm Brazilian.</i>"),
+  T("Traducí: Vos no sos profesor.",["you are not a teacher","you arent a teacher"],"<i>You aren't a teacher.</i>"),
+  ]},
+{ id:"2.2", unit:2, title:"Who's your favorite actor?", topic:"He / she / it is, adjetivos de opinión",
+  tip:`<b>He / She / It is:</b> He's an actor. She's great. It's terrible.<br><b>Negativo:</b> He isn't / She isn't / It isn't.<br><b>Preguntar favoritos:</b> <i>Who's your favorite actor?</i> (persona) / <i>What's your favorite movie?</i> (cosa)<br><b>Adjetivos de opinión:</b> great, amazing, fantastic, good, OK, bad, terrible, awful, boring, interesting.<br>Inglés americano: <b>favorite</b> (sin u).`,
+  items:[
+  M("Para preguntar por una PERSONA favorita:",["Who's your favorite singer?","What's your favorite singer?","How's your favorite singer?"],"<b>Who</b> = quién (personas)."),
+  M("Para preguntar por una COSA favorita:",["What's your favorite movie?","Who's your favorite movie?","Where's your favorite movie?"],"<b>What</b> = qué/cuál (cosas)."),
+  M("Completá: My sister ___ a doctor.",["is","are","am"],"he/she/it → <b>is</b>."),
+  M("¿Cuál adjetivo es NEGATIVO?",["terrible","amazing","fantastic"],"terrible = malo. amazing y fantastic son positivos."),
+  F("He ___ a good actor. He's terrible. (negativo)",["isnt","is not"],"Negativo: <b>He isn't</b>."),
+  F("___ your favorite actor?",["who is","whos"],"Persona → <b>Who's</b>."),
+  O("Ordená la pregunta","Who is your favorite actor?"),
+  O("Ordená la frase","She is not my teacher."),
+  L("He's great. She isn't boring.","<i>He's great. She isn't boring.</i>"),
+  SP("Respondé con cualquier actor.","Who's your favorite actor?",[/^(my favou?rite (actor|actress) is|it is|he is|she is|i like) [a-z]+/,/^[a-z]+ [a-z]+$/],"<i>My favorite actor is…</i>"),
+  SP("Decí: 'Es fantástico.' (una cosa)",null,["it is fantastic"],"<i>It's fantastic.</i>"),
+  T("Traducí: Ella no es aburrida.",["she is not boring","she isnt boring"],"<i>She isn't boring.</i>"),
+  ]},
+{ id:"2.3", unit:2, title:"Is ceviche Mexican?", topic:"Is he / she / it…?, números 20–100+, edad",
+  tip:`<b>Pregunta:</b> <i>Is it Mexican? — No, it isn't. It's Peruvian.</i> / <i>Is she from Spain? — Yes, she is.</i><br><b>Edad:</b> <i>How old are you? — I'm 30.</i> o <i>I'm 30 years old.</i> ❌ Nunca <i>I have 30 years</i>.<br><b>Decenas:</b> twenty, thirty, forty (sin u), fifty, sixty, seventy, eighty, ninety, a/one hundred.<br>21 = twenty-one, 45 = forty-five, 100 = a hundred.<br>Ojo: 13 thir<b>teen</b> vs 30 <b>thir</b>ty.`,
+  items:[
+  M("¿Cómo decís tu edad?",["I'm 30 years old.","I have 30 years.","I'm 30 years."],"Edad con verbo be: <i>I'm 30</i> o <i>I'm 30 years old</i>."),
+  M("Pregunta correcta:",["Is ceviche Mexican?","Ceviche is Mexican?","Is Mexican ceviche is?"],"Verbo primero: <b>Is</b> ceviche Mexican?"),
+  M("40 en inglés:",["forty","fourty","fourteen"],"40 = <b>forty</b> (sin u). 14 = fourteen."),
+  M("Respuesta corta: 'Is she Brazilian?' (sí)",["Yes, she is.","Yes, she's.","Yes, is she."],"Afirmativo corto sin contraer: <i>Yes, she is.</i>"),
+  M("¿Cómo se pregunta la edad?",["How old are you?","How many years you have?","What age you have?"],"<i>How old are you?</i>"),
+  F("___ he from Peru? — Yes, he is.",["is"],"he → <b>Is</b> he…?"),
+  F("I'm 25 years ___.",["old"],"<i>years old</i>."),
+  O("Ordená la pregunta","How old is your brother?"),
+  O("Ordená la frase","No it is not it is Peruvian"),
+  L("thirty, forty-five, ninety-nine","30, 45, 99."),
+  L("I'm seventy-two years old.","72 = seventy-two."),
+  L("My son is thirteen and my father is sixty.","13 vs 30, 16 vs 60: en -teen el acento va al final."),
+  SP("Respondé (con cualquier edad).","How old are you?",[new RegExp("^(i am )?(?:(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)(?: (?:one|two|three|four|five|six|seven|eight|nine))?|(?:thir|four|fif|six|seven|eigh|nine)teen|ten|eleven|twelve|(?:a|one) hundred)( years old)?$")],"<i>I'm … years old.</i> ❌ I have … years."),
+  SP("Decí el número 68.",null,["sixty eight","68"],"68 = sixty-eight."),
+  T("Traducí: ¿Ella es de España? — No.",["is she from spain no she is not","is she from spain no she isnt","is she from spain no"],"<i>Is she from Spain? — No, she isn't.</i>"),
+  ]},
+{ id:"2.4", unit:2, title:"Where are your two favorite places?", topic:"You / we / they are, adjetivos",
+  tip:`<b>You / We / They are:</b> We're friends. They're from Chile.<br><b>Negativo:</b> We aren't / They aren't.<br><b>Pregunta:</b> <i>Are they nice? — Yes, they are. / No, they aren't.</i><br><b>Adjetivo antes del sustantivo y sin plural:</b> <i>beautiful beaches</i> ❌ beautifuls beaches.<br>Adjetivos: beautiful, big, small, old, new, cheap, expensive, hot, cold, crowded, quiet.`,
+  items:[
+  M("Completá: My friends ___ from Chile.",["are","is","am"],"Plural (they) → <b>are</b>."),
+  M("Orden correcto:",["It's a beautiful city.","It's a city beautiful.","It's beautiful a city."],"En inglés el adjetivo va <b>antes</b> del sustantivo."),
+  M("Frase correcta:",["They're big cities.","They're bigs cities.","They're cities bigs."],"Los adjetivos <b>no</b> llevan plural."),
+  M("Contrario de 'expensive':",["cheap","old","quiet"],"expensive = caro, cheap = barato."),
+  M("Frase correcta:",["It's very hot today.","Is very hot today.","Very hot today is."],"El sujeto es obligatorio: <b>It's</b> hot. ❌ Is hot."),
+  F("We ___ friends. We're classmates. (negativo)",["arent","are not"],"Negativo: <b>We aren't</b>."),
+  F("___ they from Argentina? — Yes, they are.",["are"],"they → <b>Are</b> they…?"),
+  O("Ordená la pregunta","Where are your two favorite places?"),
+  O("Ordená la frase","They are not expensive."),
+  L("We're from Asunción. It's hot.","<i>We're from Asunción. It's hot.</i>"),
+  SP("Respondé (cualquier lugar).","Where are your two favorite places?",[/^(my (two )?favorite places are |they are )?[a-z ]+ and [a-z ]+/],"<i>My favorite places are … and ….</i>"),
+  SP("Decí: 'Somos estudiantes.'",null,["we are students"],"<i>We're students.</i>"),
+  T("Traducí: Ellos no son caros.",["they are not expensive","they arent expensive"],"<i>They aren't expensive.</i>"),
+  ]},
+{ id:"2.5", unit:2, title:"Is English essential for your future?", topic:"Cognados, información de otras personas",
+  tip:`<b>Cognados:</b> essential, important, future, interesting, possible, necessary, university, music, family, problem.<br>Ojo con falsos amigos: <i>actually</i> = en realidad (no 'actualmente'), <i>library</i> = biblioteca (no 'librería').<br><b>Hablar de otros:</b> <i>His name is Tom. He's 20. He's from Canada.</i><br><i>Her name is Lia. She's a student.</i><br><b>His</b> = de él, <b>Her</b> = de ella.`,
+  items:[
+  M("'Library' significa:",["biblioteca","librería","laboratorio"],"Falso amigo: <i>library</i> = biblioteca. Librería = bookstore."),
+  M("'Actually' significa:",["en realidad","actualmente","activamente"],"Falso amigo: <i>actually</i> = en realidad."),
+  M("Completá: ___ name is Tom. He's 20.",["His","Her","He"],"de él → <b>His</b>."),
+  M("Completá: ___ name is Lia. She's a student.",["Her","His","She"],"de ella → <b>Her</b>."),
+  F("English is ___ for my future. (esencial)",["essential"],"<i>essential</i> = esencial."),
+  F("How old ___ she? — She's 19.",["is"],"she → <b>is</b>."),
+  O("Ordená la pregunta","Is English essential for your future?"),
+  O("Ordená la pregunta","How old is her brother?"),
+  L("English is important for my job.","<i>English is important for my job.</i>"),
+  SP("Respondé.","Is English essential for your future?",[/^(yes|no|yeah|of course)\b/],"<i>Yes, it is.</i> / <i>Yes, it's very important.</i>"),
+  SP("Contá de un amigo: nombre Tom, 20 años.",null,[/^(his name is|he is|this is|my friends name is) tom\b.*\btwenty( years old)?$/],"<i>His name is Tom. He's twenty.</i>"),
+  T("Traducí: Su nombre (de ella) es Ana.",["her name is ana","her names ana"],"<i>Her name is Ana.</i>"),
+  ]},
+{ id:"3.1", unit:3, title:"What do you do?", topic:"Trabajos, sufijos, a/an + trabajo, plurales",
+  tip:`<b>Preguntar trabajo:</b> <i>What do you do?</i> → <i>I'm <b>a</b> teacher.</i> / <i>I'm <b>an</b> engineer.</i><br>En inglés el trabajo <b>siempre</b> lleva a/an ❌ I'm teacher.<br><b>Sufijos:</b> teach<b>er</b>, act<b>or</b>, art<b>ist</b>, music<b>ian</b>, account<b>ant</b>, manag<b>er</b>, dent<b>ist</b>.<br><b>Plurales irregulares:</b> man → men, woman → women, person → people, child → children.`,
+  items:[
+  M("Frase correcta:",["I'm an engineer.","I'm engineer.","I'm a engineer."],"Trabajo con artículo; <i>engineer</i> empieza con vocal → <b>an</b>."),
+  M("¿Qué pregunta 'What do you do?'",["¿A qué te dedicás?","¿Qué estás haciendo?","¿Qué hacés hoy?"],"<i>What do you do?</i> = ¿Cuál es tu trabajo?"),
+  M("Persona que toca música:",["musician","musicer","musicist"],"music + <b>-ian</b>."),
+  M("Plural de 'woman':",["women","womans","womens"],"Irregular: woman → <b>women</b>."),
+  M("Plural de 'person':",["people","persones","peoples'"],"Irregular: person → <b>people</b>."),
+  M("Completá: The people in my office ___ nice.",["are","is","am"],"<i>people</i> es plural → <b>are</b>. ❌ people is."),
+  F("She's ___ accountant.",["an"],"accountant empieza con vocal → <b>an</b>."),
+  F("What do you ___? — I'm a manager.",["do"],"<i>What do you <b>do</b>?</i>"),
+  O("Ordená la pregunta","What do you do?"),
+  O("Ordená la frase","They are doctors."),
+  L("I'm a nurse. He's an actor.","<i>I'm a nurse. He's an actor.</i>"),
+  SP("Respondé con un trabajo (con a/an).","What do you do?",[/^(i am |im )(a|an) [a-z ]+/],"<i>I'm a/an …</i> (¡no olvides el artículo!)"),
+  SP("Decí: 'Ella es dentista.'",null,["she is a dentist"],"<i>She's a dentist.</i>"),
+  T("Traducí: Soy gerente.",["i am a manager"],"<i>I'm a manager.</i> (con artículo)"),
+  ]},
+{ id:"3.2", unit:3, title:"Do you have brothers and sisters?", topic:"Familia, presente simple I/you/we/they, posesivos",
+  tip:`<b>Presente simple (I/you/we/they):</b> I have a sister. ❌ I has.<br><b>Negativo:</b> I <b>don't</b> have a brother. (don't = do not)<br><b>Pregunta:</b> <i><b>Do</b> you have kids? — Yes, I do. / No, I don't.</i><br><b>Familia:</b> mother, father, parents, brother, sister, son, daughter, husband, wife, grandmother, grandfather, uncle, aunt, cousin.<br><b>Posesivos:</b> my, your, his, her, its, our, their.<br><b>'s</b> para 'de alguien': <i>my father's car</i> (❌ the car of my father).`,
+  items:[
+  M("Pregunta correcta:",["Do you have brothers and sisters?","Have you brothers and sisters?","You have brothers and sisters?"],"Presente simple: <b>Do</b> + you + have…?"),
+  M("Negativo correcto:",["I don't have a sister.","I not have a sister.","I haven't a sister."],"Negativo: <b>don't</b> + verbo."),
+  M("La hija de tu tío es tu:",["cousin","niece","aunt"],"primo/a = <b>cousin</b>."),
+  M("Completá: We love ___ parents.",["our","we","us"],"we → posesivo <b>our</b>."),
+  M("'El auto de mi padre' en inglés:",["my father's car","the car of my father","my father car"],"Posesivo con <b>'s</b>: <i>my father's car</i>. ❌ the car of my father."),
+  F("My ___ name is Luci. (de mi mamá)",["mother's","moms","mom's","mothers"],"Posesivo: <i>my mother's name</i>."),
+  M("Respuesta corta: 'Do you have kids?' (no)",["No, I don't.","No, I not.","No, I haven't."],"<i>No, I don't.</i>"),
+  F("They ___ have a car. (negativo)",["dont","do not"],"Negativo: <b>don't</b>."),
+  F("___ you have a brother? — Yes, I do.",["do"],"Pregunta: <b>Do</b> you…?"),
+  O("Ordená la pregunta","Do you have brothers and sisters?"),
+  O("Ordená la frase","I do not have a brother."),
+  L("I have two sisters and one brother.","<i>I have two sisters and one brother.</i>"),
+  SP("Respondé.","Do you have brothers and sisters?",[/^(yes|no|yeah)\b/],"<i>Yes, I do. I have…</i> / <i>No, I don't.</i>"),
+  SP("Decí: 'Ellos son mis padres.'",null,["they are my parents"],"<i>They're my parents.</i>"),
+  T("Traducí: No tengo hijos.",[/^i (do not have (any )?(children|kids)|have no (children|kids))$/],"<i>I don't have children/kids.</i>"),
+  ]},
+{ id:"3.3", unit:3, title:"Do you have a job?", topic:"Lugares de trabajo, preguntas en presente simple",
+  tip:`<b>Preguntas:</b> <i>Do you work? Do you have a job?</i> → <i>Yes, I do. / No, I don't.</i><br><b>Con Wh-:</b> <i>Where <b>do</b> you work?</i> → <i>I work <b>in</b> an office / <b>in</b> a hospital / <b>at</b> home / <b>at</b> a school.</i><br><b>Lugares:</b> office, hospital, school, store, bank, restaurant, factory, hotel.`,
+  items:[
+  M("Pregunta correcta:",["Where do you work?","Where you work?","Where does you work?"],"Wh- + <b>do</b> + you + verbo."),
+  M("Un médico trabaja en un:",["hospital","factory","bank"],"doctor → hospital."),
+  M("Completá: I work ___ home.",["at","in","on"],"<b>at</b> home."),
+  M("Completá: She's a teacher. She works in a ___.",["school","store","bank"],"teacher → school."),
+  F("___ you have a job? — No, I don't.",["do"],"<b>Do</b> you…?"),
+  F("I work ___ an office.",["in"],"<b>in</b> an office."),
+  O("Ordená la pregunta","Where do you work?"),
+  O("Ordená la frase","I work in a bank."),
+  L("Do you work in a restaurant?","<i>Do you work in a restaurant?</i>"),
+  SP("Respondé.","Where do you work?",[/^i work (in|at|for|from) [a-z ]+/],"<i>I work in/at …</i>"),
+  SP("Preguntá: '¿Tenés trabajo?'",null,["do you have a job","do you work"],"<i>Do you have a job?</i>"),
+  T("Traducí: Trabajo en una fábrica.",["i work in a factory","i work at a factory"],"<i>I work in a factory.</i>"),
+  ]},
+{ id:"3.4", unit:3, title:"Where does your mother work?", topic:"Presente simple he / she / it",
+  tip:`<b>He / She / It:</b> el verbo lleva <b>-s</b>: She work<b>s</b>. He live<b>s</b>. It open<b>s</b>.<br>Especiales: have → <b>has</b>, go → go<b>es</b>, watch → watch<b>es</b>, study → stud<b>ies</b>.<br><b>Negativo:</b> She <b>doesn't</b> work. (sin -s en el verbo)<br><b>Pregunta:</b> <i><b>Does</b> he work? — Yes, he does. / No, he doesn't.</i> <i>Where <b>does</b> your mother work?</i>`,
+  items:[
+  M("Completá: My mother ___ in a bank.",["works","work","working"],"she → verbo + <b>s</b>."),
+  M("Pregunta correcta:",["Where does your mother work?","Where do your mother work?","Where does your mother works?"],"he/she → <b>does</b> + verbo SIN s."),
+  M("Negativo correcto:",["He doesn't work.","He doesn't works.","He don't work."],"<b>doesn't</b> + verbo sin s."),
+  M("She ___ two children.",["has","have","haves"],"have → <b>has</b> con he/she/it."),
+  M("He ___ English at night. (study)",["studies","studys","study"],"consonante + y → <b>-ies</b>."),
+  F("___ your father work? — Yes, he does.",["does"],"he → <b>Does</b>."),
+  F("She doesn't ___ in an office. (work)",["work"],"Después de doesn't, verbo <b>sin s</b>."),
+  O("Ordená la pregunta","Where does your mother work?"),
+  O("Ordená la frase","My brother does not work."),
+  L("My sister lives in Brazil.","<i>My sister lives in Brazil.</i> (lives con s)"),
+  SP("Respondé (cualquier lugar).","Where does your mother work?",[/^(she|my (mother|mom|mum)) (works|does not work|is)\b/],"<i>She works in/at …</i> (works con s)"),
+  SP("Decí: 'Él tiene un auto.'",null,["he has a car"],"<i>He has a car.</i>"),
+  SP("Respondé.","What does your father do?",[/^(he is (a|an) [a-z]+|he (works|does not work|is retired)|my (father|dad) (is|works|does not work))/],"<i>He's a/an …</i> / <i>He works in/at …</i>"),
+  SP("Preguntá: '¿Tu esposa trabaja?'",null,["does your wife work","does your wife have a job"],"<i>Does your wife work?</i> (does + verbo sin s)"),
+  T("Traducí: Mi padre no trabaja.",["my father does not work","my father doesnt work","my dad does not work","my dad doesnt work"],"<i>My father doesn't work.</i>"),
+  ]},
+{ id:"3.5", unit:3, title:"Do you live near here?", topic:"Datos personales: dónde vivís y estudiás",
+  tip:`<b>Preguntas clave del oral:</b><br><i>Do you live near here?</i> → <i>Yes, I do. / No, I don't. I live in…</i><br><i>Where do you live?</i> → <i>I live in Asunción.</i><br><i>Where do you study?</i> → <i>I study at One2One.</i><br><i>Who do you live with?</i> → <i>I live with my wife / my family.</i><br>near = cerca, far from = lejos de.`,
+  items:[
+  M("Pregunta correcta:",["Do you live near here?","Are you live near here?","You live near here?"],"Presente simple: <b>Do</b> you live…?"),
+  M("'near here' significa:",["cerca de acá","lejos de acá","acá adentro"],"near = cerca."),
+  M("Completá: I study ___ One2One.",["at","on","to"],"study <b>at</b> + lugar."),
+  M("Respuesta a 'Who do you live with?'",["I live with my family.","I live in Asunción.","I live near here."],"<i>with</i> = con."),
+  F("Where ___ you live?",["do"],"<b>do</b> you live."),
+  F("I live ___ Asunción.",["in"],"ciudad → <b>in</b>."),
+  O("Ordená la pregunta","Where do you study?"),
+  O("Ordená la frase","I do not live near here."),
+  L("I live with my family in Asunción.","<i>I live with my family in Asunción.</i>"),
+  SP("Respondé.","Do you live near here?",[/^(yes|no|yeah)\b/],"<i>Yes, I do.</i> / <i>No, I don't. I live in…</i>"),
+  SP("Respondé.","Where do you study?",[/^i study (english )?(at|in) [a-z0-9 ]+/],"<i>I study at …</i>"),
+  SP("Respondé.","Who do you live with?",[/^(i live (alone|with [a-z ]+)|with [a-z ]+|alone)/],"<i>I live with my wife.</i> / <i>I live alone.</i>"),
+  T("Traducí: Vivo lejos de acá.",["i live far from here","i live far away from here","i live far away"],"<i>I live far from here.</i>"),
+  ]},
+{ id:"4.1", unit:4, title:"Is there an ATM near here?", topic:"There is / there are, objetos personales, colores",
+  tip:`<b>There is</b> (singular) / <b>There are</b> (plural) = hay.<br><i>There's an ATM near here. There are two banks.</i><br><b>Negativo:</b> There isn't a bank. There aren't any stores.<br><b>Pregunta:</b> <i>Is there an ATM? — Yes, there is. / No, there isn't.</i> <i>Are there any keys? — Yes, there are.</i><br><b>Objetos:</b> wallet, keys, phone, glasses, umbrella, watch, sunglasses, ID card, credit card.<br><b>Colores:</b> black, white, red, blue, green, yellow, brown, gray, pink, orange, purple.`,
+  items:[
+  M("Completá: ___ an ATM near here.",["There's","There are","They're"],"singular → <b>There's</b> (there is)."),
+  M("Completá: ___ three keys in my bag.",["There are","There is","They are"],"plural → <b>There are</b>."),
+  M("Pregunta correcta:",["Is there a bank near here?","There is a bank near here?","Are there a bank near here?"],"Pregunta: <b>Is there</b> + singular?"),
+  M("Respuesta corta: 'Are there any stores?' (no)",["No, there aren't.","No, there isn't.","No, they aren't."],"plural → <b>No, there aren't.</b>"),
+  M("'Wallet' es:",["billetera","reloj","llave"],"wallet = billetera."),
+  F("There ___ two umbrellas in the car.",["are"],"plural → <b>are</b>."),
+  F("___ there an ATM? — Yes, there is.",["is"],"singular → <b>Is</b> there…?"),
+  O("Ordená la pregunta","Is there an ATM near here?"),
+  O("Ordená la frase","There are two black phones."),
+  L("There's a red wallet in my bag.","<i>There's a red wallet in my bag.</i>"),
+  SP("Preguntá: '¿Hay un cajero automático cerca?'",null,["is there an atm near here","is there an atm near","is there an atm nearby"],"<i>Is there an ATM near here?</i>"),
+  SP("Respondé: ¿qué hay en tu bolso?","What's in your bag?",[/^(there is|there are|in my bag there (is|are))\b/,/^(my|a|an|some|two|three) [a-z]+/,/^(keys|money)\b/],"<i>There's a phone and there are two keys.</i>"),
+  T("Traducí: No hay un banco acá.",["there is not a bank here","there isnt a bank here","there is no bank here"],"<i>There isn't a bank here.</i>"),
+  ]},
+{ id:"4.2", unit:4, title:"Are those your books?", topic:"This / that / these / those",
+  tip:`<b>Cerca:</b> this (singular) / these (plural).<br><b>Lejos:</b> that (singular) / those (plural).<br><i>This is my phone. These are my keys.</i><br><i>Is that your car? Are those your books?</i><br>Respuestas: <i>Yes, it is. / Yes, they are.</i>`,
+  items:[
+  M("Plural cerca:",["these","those","this"],"cerca + plural → <b>these</b>."),
+  M("Singular lejos:",["that","this","those"],"lejos + singular → <b>that</b>."),
+  M("Completá: ___ are my glasses. (en mi mano)",["These","This","That"],"plural cerca → <b>These</b>."),
+  M("Completá: Are ___ your books? (allá)",["those","that","this"],"plural lejos → <b>those</b>."),
+  M("Respuesta: 'Are those your keys?' (sí)",["Yes, they are.","Yes, it is.","Yes, these is."],"plural → <b>Yes, they are.</b>"),
+  F("___ is my phone. (en mi mano)",["this"],"singular cerca → <b>This</b>."),
+  F("Is ___ your car? (allá lejos)",["that"],"singular lejos → <b>that</b>."),
+  O("Ordená la pregunta","Are those your books?"),
+  O("Ordená la frase","These are my keys."),
+  L("Is that your umbrella?","<i>Is that your umbrella?</i>"),
+  SP("Preguntale a tu amigo: '¿Esos son tus libros?' (están lejos)",null,["are those your books"],"<i>Are those your books?</i>"),
+  SP("Decí: 'Estas son mis llaves.'",null,["these are my keys"],"<i>These are my keys.</i>"),
+  T("Traducí: ¿Es ese tu auto?",["is that your car"],"<i>Is that your car?</i>"),
+  ]},
+{ id:"4.3", unit:4, title:"What things do you lose?", topic:"Plurales y decir la hora",
+  tip:`<b>Plurales:</b> key → keys, watch → watch<b>es</b>, glass → glass<b>es</b>, knife → kni<b>ves</b>, man → men, child → children.<br><b>La hora:</b> <i>What time is it?</i><br>7:00 = It's seven o'clock. · 7:15 = It's a quarter past seven / seven fifteen. · 7:30 = It's half past seven / seven thirty. · 7:45 = It's a quarter to eight / seven forty-five. · 7:10 = It's ten past seven. · 7:50 = It's ten to eight.<br>EE.UU. también: <i>a quarter after seven</i>, <i>ten after seven</i>.`,
+  items:[
+  M("Plural de 'watch':",["watches","watchs","watch"],"termina en -ch → <b>-es</b>."),
+  M("Plural de 'child':",["children","childs","childrens"],"Irregular: <b>children</b>."),
+  M("7:30 se dice:",["half past seven","half past eight","half to seven"],"7:30 = <b>half past seven</b>."),
+  M("8:45 se dice:",["a quarter to nine","a quarter past eight","a quarter to eight"],"8:45 = faltan 15 para las 9 = <b>a quarter to nine</b>."),
+  M("¿Cómo preguntás la hora?",["What time is it?","What hour is it?","How time is it?"],"<i>What time is it?</i>"),
+  M("En EE.UU., 7:15 también se dice:",["a quarter after seven","a quarter to seven","seven and a quarter"],"AmE: <i>a quarter after seven</i> = <i>a quarter past seven</i>."),
+  F("It's three ___. (3:00)",["oclock"],"en punto = <b>o'clock</b>."),
+  F("I always lose my ___. (plural de key)",["keys"],"key → <b>keys</b>."),
+  O("Ordená la pregunta","What time is it?"),
+  O("Ordená la frase","It is a quarter past ten."),
+  L("It's ten past six.","6:10 = ten past six.",["it is six ten","ten past six"]),
+  L("It's a quarter to five.","4:45 = a quarter to five.",["it is four forty five","it is quarter to five","a quarter to five"]),
+  SP("Decí la hora: 9:15",null,["it is a quarter past nine","a quarter past nine","it is nine fifteen","nine fifteen","quarter past nine","it is quarter past nine"],"<i>It's a quarter past nine</i> / <i>It's nine fifteen.</i>"),
+  SP("Respondé.","What things do you lose?",[/^(i (always |often |sometimes |usually |never )?lose [a-z]+|my [a-z]+|(my )?(keys|glasses|phone|wallet|umbrella|sunglasses|money)\b)/],"<i>I lose my keys and my glasses.</i>"),
+  ]},
+{ id:"4.4", unit:4, title:"What time do you get up?", topic:"Rutina diaria, repaso presente simple",
+  tip:`<b>Rutina:</b> get up, have breakfast, take a shower, go to work, have lunch, finish work, go home, have dinner, watch TV, go to bed.<br><b>Hora:</b> <i>What time do you get up?</i> → <i>I get up <b>at</b> 6:30.</i><br><b>He/she:</b> She get<b>s</b> up at 7. He go<b>es</b> to bed at 11.<br><b>Preguntas:</b> <i>What time does she have lunch?</i><br><b>Partes del día:</b> in the morning, in the afternoon, in the evening, <b>at</b> night. Días: <b>on</b> Monday.<br><b>Frecuencia</b> (antes del verbo): always, usually, often, sometimes, never → <i>I always get up at 7.</i> · <i>go home</i> (sin to).`,
+  items:[
+  M("Completá: I get up ___ 7:00.",["at","in","on"],"hora → <b>at</b>."),
+  M("Completá: She ___ to bed at 11.",["goes","go","gos"],"go → <b>goes</b> con she."),
+  M("Pregunta correcta:",["What time do you get up?","What time you get up?","What time does you get up?"],"<b>do</b> + you + verbo."),
+  M("Completá: I watch TV ___ the evening.",["in","at","on"],"<b>in</b> the evening (pero <b>at</b> night)."),
+  M("Pregunta correcta:",["What time does he have lunch?","What time does he has lunch?","What time do he have lunch?"],"<b>does</b> + verbo sin s."),
+  M("Completá: I go ___ at 6 p.m.",["home","to home","to the home"],"<i>go home</i> sin <i>to</i>. ❌ go to home."),
+  M("Orden correcto:",["I always get up at seven.","I get always up at seven.","I get up always at seven."],"El adverbio de frecuencia va <b>antes</b> del verbo (pero después de be: <i>I'm always late</i>)."),
+  F("I don't work ___ Sunday.",["on"],"Días → <b>on</b>: on Monday, on Sunday."),
+  F("What time ___ you go to work?",["do"],"you → <b>do</b>."),
+  F("He ___ breakfast at 6:30. (have)",["has"],"have → <b>has</b>."),
+  O("Ordená la pregunta","What time do you get up?"),
+  O("Ordená la pregunta","What time does she have lunch?"),
+  L("I get up at six thirty and have breakfast.","<i>I get up at six thirty and have breakfast.</i>"),
+  SP("Respondé (cualquier hora).","What time do you get up?",[new RegExp("^i (usually |always |normally )?(get|wake) up at ((a )?quarter (past|to|after) |half past |(ten|twenty|five|twenty five) (past|to|after) )?(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\\b")],"<i>I get up at…</i>"),
+  SP("Contá algo de tu día.","Tell me about your typical day.",[/^((every day|in the morning|usually) )?i (usually |always |normally )?(get up|wake up|have|go|take|work|start)/],"<i>I get up at 6, I have breakfast and I go to work at 7.</i>"),
+  T("Traducí: Ella se acuesta a las 10.",[/^she goes to bed at ten( oclock)?( pm| p m| at night| in the evening)?$/],"<i>She goes to bed at ten.</i>"),
+  ]},
+];
+function M(q,opts,expl){return{t:"mc",q,opts,expl}}
+function F(q,a,expl){return{t:"fill",q,a,expl}}
+function O(q,a){return{t:"order",q,a,expl:`Orden correcto: <i>${a}</i>`}}
+function L(say,expl,alt=[]){return{t:"listen",q:"Escuchá y escribí lo que oís",say,a:[say,...alt],expl}}
+function SP(q,say,a,expl){return{t:"speak",q,say,a,expl}}
+function T(q,a,expl){return{t:"translate",q,a,expl}}
+
+const LOGO="data:image/png;base64,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";
+const $=s=>document.querySelector(s), app=$("#app"), foot=$("#foot"), footin=$("#footin");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const LESSONS=UNITS; UNITS.forEach(u=>u.items.forEach((it,i)=>it.key=u.id+"#"+i));
+const ITEM=Object.fromEntries(UNITS.flatMap(u=>u.items.map(it=>[it.key,{...it,lesson:u.id}])));
+const TYPE={mc:"Elegí la opción correcta",fill:"Completá el espacio",order:"Ordená las palabras",listen:"Escuchá",speak:"Hablá",translate:"Traducí al inglés"};
+
+/* ---------- normalización y corrección ---------- */
+const ONES="zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split(" ");
+const TENS=",,twenty,thirty,forty,fifty,sixty,seventy,eighty,ninety".split(",");
+function numWords(n){n=+n;if(n<20)return ONES[n];if(n<100)return TENS[n/10|0]+(n%10?" "+ONES[n%10]:"");if(n<1000)return ONES[n/100|0]+" hundred"+(n%100?" "+numWords(n%100):"");return String(n).split("").map(d=>ONES[d]).join(" ")}
+const CONTR={"i'm":"i am","im":"i am","you're":"you are","youre":"you are","he's":"he is","hes":"he is","she's":"she is","shes":"she is","it's":"it is","its":"it is","we're":"we are","they're":"they are","theyre":"they are","what's":"what is","whats":"what is","who's":"who is","whos":"who is","where's":"where is","wheres":"where is","there's":"there is","theres":"there is","that's":"that is","thats":"that is","isn't":"is not","isnt":"is not","aren't":"are not","arent":"are not","don't":"do not","dont":"do not","doesn't":"does not","doesnt":"does not","i'm not":"i am not","can't":"can not","cant":"can not","cannot":"can not","o'clock":"oclock","o clock":"oclock"};
+function norm(s){
+  s=String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’‘`´]/g,"'");
+  s=s.replace(/o\s*'?\s*clock/g,"oclock").replace(/(\d{1,2}):(\d{2})/g,(m,h,mm)=>numWords(h)+" "+(mm==="00"?"oclock":(+mm<10?"oh "+numWords(+mm):numWords(mm))));
+  s=s.replace(/@([a-z0-9.]+)/g,(m,d)=>" at "+d.replace(/\./g," dot ")+" ").replace(/\b(\d+) ?([ap])\.? ?m\b\.?/g,"$1 $2m").replace(/[-–—_/.,!?;:"()¿¡]/g," ");
+  s=s.replace(/\d+/g,d=>" "+(d[0]==="0"&&d.length>1||d.length>3?d.split("").map(x=>ONES[x]).join(" "):numWords(d))+" ");
+  s=s.split(/\s+/).map(w=>CONTR[w]||w).join(" ").replace(/'/g,"");
+  return s.replace(/\s+/g," ").trim();
+}
+function lev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=[...Array(n+1).keys()];for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
+// typo = una sola palabra de contenido mal escrita; nunca perdona errores de gramática (artículos, -s, this/these…)
+const FUNC=new Set("a an the in at on to this that these those is are am do does has have he she it they we you i his her my your our their not".split(" "));
+function isTypo(n,r){const A=n.split(" "),B=r.split(" ");if(A.length!==B.length)return false;let d=0;for(let i=0;i<A.length;i++){const x=A[i],y=B[i];if(x===y)continue;if(++d>1||FUNC.has(x)||FUNC.has(y)||x.length<4||x+"s"===y||y+"s"===x||x+"es"===y||y+"es"===x||lev(x,y)>Math.max(1,x.length/5|0))return false}return d===1}
+// devuelve "ok" | "typo" | "bad"
+function grade(it,resp){
+  if(it.t==="mc")return resp===it.opts[0]?"ok":"bad";
+  const r=norm(resp); if(!r)return "bad";
+  const acc=it.t==="order"?[it.a]:it.a;
+  for(const a of acc){ if(a instanceof RegExp){ if(a.test(r))return "ok"} else if(norm(a)===r)return "ok" }
+  if(it.t==="listen"&&acc.some(a=>typeof a==="string"&&norm(a).replace(/ /g,"")===r.replace(/ /g,"")))return "ok";
+  if(it.t!=="fill") for(const a of acc){ if(typeof a==="string"){const n=norm(a);if(n.length>10&&isTypo(n,r))return "typo"} }
+  return "bad";
+}
+function correctText(it){
+  if(it.t==="mc")return it.opts[0];
+  if(it.t==="order")return it.a;
+  if(it.t==="listen")return it.say;
+  const x=it.a.find(a=>typeof a==="string"); if(!x)return null;
+  if(it.t==="fill")return x.replace(/^isnt$/,"isn't").replace(/^arent$/,"aren't").replace(/^dont$/,"don't").replace(/^doesnt$/,"doesn't").replace(/^whos$/,"who's").replace(/^oclock$/,"o'clock").replace(/^im$/,"I'm").replace(/\bi\b/g,"I");
+  const t=x.replace(/\bi\b/g,"I").replace(/\batm\b/g,"ATM").replace(/\b(brazil|brazilian|spain|paraguay|ana|leo|tom|english|sunday)\b/g,w=>w[0].toUpperCase()+w.slice(1)).replace(/^([a-z]) ([a-z]) /,(m)=>m.toUpperCase().replace(/ /g,"-"));
+  return t.charAt(0).toUpperCase()+t.slice(1);
+}
+
+/* ---------- voz ---------- */
+let voice=null;
+// Android reporta el idioma como en_US, iOS/PC como en-US
+const DICT="Tocá el campo y usá el <b>micrófono del teclado</b> (dictado) para responder hablando. iPhone: micrófono del teclado · Android: micrófono de Gboard · Mac: Fn dos veces · Windows: Windows + H.";
+function pickVoice(){const vs=speechSynthesis.getVoices();voice=vs.find(v=>/en[-_]US/i.test(v.lang)&&/samantha|google us|united states|aria|jenny|allison/i.test(v.name))||vs.find(v=>/en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null}
+if("speechSynthesis" in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+function speak(text,rate=0.92){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang="en-US";if(voice)u.voice=voice;u.rate=rate;speechSynthesis.speak(u)}catch(e){}}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let micBlocked=!SR, rec=null;
+function listen(onText,onEnd){
+  if(micBlocked)return false;
+  try{rec=new SR();rec.lang="en-US";rec.interimResults=false;rec.maxAlternatives=3;
+    rec.onresult=e=>{const alts=[...e.results[0]].map(a=>a.transcript);onText(alts)};
+    rec.onerror=e=>{if(/not-allowed|service-not-allowed|audio-capture/.test(e.error)){micBlocked=true;onEnd("blocked")}else onEnd("error")};
+    rec.onend=()=>onEnd();rec.start();return true}catch(e){micBlocked=true;return false}
+}
+
+/* ---------- datos ---------- */
+let me=null, P=null;
+const slug=n=>norm(n).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40)||"anon";
+const ls={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const blank=name=>({name,xp:0,done:{},missed:[],exam:{best:null,last:null,tries:0},updatedAt:0});
+function merge(a,b){ if(!a)return b; if(!b)return a; const o=blank(a.name||b.name); o.xp=Math.max(a.xp||0,b.xp||0);
+  for(const k of new Set([...Object.keys(a.done||{}),...Object.keys(b.done||{})]))o.done[k]=Math.max(a.done?.[k]||0,b.done?.[k]||0);
+  o.missed=[...new Set([...(a.missed||[]),...(b.missed||[])])].filter(k=>ITEM[k]);
+  o.exam={best:Math.max(a.exam?.best??-1,b.exam?.best??-1),last:(a.updatedAt||0)>(b.updatedAt||0)?a.exam?.last:b.exam?.last,tries:Math.max(a.exam?.tries||0,b.exam?.tries||0)}; if(o.exam.best<0)o.exam.best=null;
+  o.updatedAt=Math.max(a.updatedAt||0,b.updatedAt||0); return o }
+function save(){ P.updatedAt=Date.now(); ls.set("o2o:p:"+me,P) }
+function login(name){ name=name.trim().replace(/\s+/g," ").slice(0,30); if(!name)return; me=slug(name); P=merge(ls.get("o2o:p:"+me),blank(name)); P.name=name; ls.set("o2o:me",me); ls.set("o2o:last",name); save();
+  view="home"; render() }
+
+/* ---------- vistas ---------- */
+let view="login", S=null;
+function stars(n){return "★".repeat(n)+"☆".repeat(3-n)}
+function render(){ foot.hidden=true; app.style.paddingBottom=""; document.onkeydown=null; app.className="wrap "+(view==="home"?"wide":view==="login"?"":"mid"); ({login:vLogin,home:vHome,tip:vTip,q:vQ,end:vEnd,examEnd:vExamEnd}[view])(); window.scrollTo(0,0) }
+function header(){ const done=Object.keys(P.done).length;
+  return `<header class="top"><img src="${LOGO}" alt="One2One — You make it real"><div class="who"><span class="muted small">Hola,</span><br><b>${esc(P.name)}</b></div>
+  <div class="stats"><span class="chip" title="Experiencia">⚡ ${P.xp} XP</span><span class="chip" title="Lecciones completas">✔ ${done}/${LESSONS.length}</span></div></header>` }
+function go(v){view=v;render()}
+function vLogin(){
+  app.innerHTML=`<div class="login"><img src="${LOGO}" alt="One2One — You make it real"><h1>English Exam Prep</h1>
+  <p class="muted">ID 1 · Unidades 1.1 a 4.4 · escrito, oral y opción múltiple</p>
+  <form id="lf" style="display:grid;gap:12px"><label for="nm" class="muted small">Escribí tu nombre para guardar tu progreso</label>
+  <input class="ans" id="nm" autocomplete="given-name" placeholder="Tu nombre" maxlength="30" value="${esc(ls.get("o2o:last")||"")}"><button class="btn red">Empezar</button></form></div>`;
+  $("#lf").onsubmit=e=>{e.preventDefault();login($("#nm").value)}; }
+function vHome(){
+  const done=Object.keys(P.done).length, next=LESSONS.find(l=>!P.done[l.id]);
+  let path=""; let u=0; for(const l of LESSONS){ if(l.unit!==u){u=l.unit;const n=LESSONS.filter(x=>x.unit===u),d=n.filter(x=>P.done[x.id]).length;path+=`${u>1?"</div>":""}<div class="unit"><span class="un">${u}</span><div><h3>Unit ${u}</h3><span class="muted small">${d}/${n.length} lecciones</span></div></div><div class="ugrid">`}
+    const d=P.done[l.id]; path+=`<button class="lesson ${d?"done":""} ${l===next?"next":""}" onclick="openTip('${l.id}')"><span class="num">${l.id}</span><span class="txt"><b>${esc(l.title)}</b><span class="muted small">${esc(l.topic)}</span></span>${d?`<span class="stars" aria-label="${d} estrellas">${stars(d)}</span>`:l===next?`<span class="go">Seguir</span>`:""}</button>` }
+  path+="</div>";
+  app.innerHTML=header()+`<div class="home"><aside class="side">
+  <section class="hero"><div class="stripes" aria-hidden="true"></div><span class="eyebrow">Plan de estudio · examen del miércoles</span><h2>${next?done+" de "+LESSONS.length+" lecciones":"¡Todas las lecciones listas!"}</h2>
+  <div class="bar"><i style="width:${done/LESSONS.length*100}%"></i></div>
+  <p class="small">${next?`Siguiente: <b>${next.id} · ${esc(next.title)}</b><br>Hacé las lecciones en orden y cerrá con el simulacro.`:"Hacé el simulacro de 100 preguntas y repasá tus errores."}</p>
+  <button class="btn red" onclick="${next?`openTip('${next.id}')`:"startExam()"}">${next?"Continuar":"Hacer el simulacro"}</button></section>
+  <section class="score"><div><span class="eyebrow">Puntuación final</span><b class="sc">${P.exam.best!=null?P.exam.best+"%":"—"}</b><span class="muted small">${P.exam.best!=null?"mejor nota del simulacro":"hacé el simulacro para tener tu nota"}</span></div><div><span class="eyebrow">Experiencia</span><b class="sc">${P.xp}</b><span class="muted small">XP · ${done}/${LESSONS.length} lecciones</span></div></section>
+  <button class="card" onclick="startExam()"><span class="cnum">100</span><span class="txt"><b>Simulacro de examen</b><span class="muted small">${ls.get("o2o:exam:"+me)?`En curso: ${ls.get("o2o:exam:"+me).idx}/100 · tocá para continuar`:P.exam.best!=null?`Mejor nota: ${P.exam.best}% · ${P.exam.tries} ${P.exam.tries===1?"intento":"intentos"}`:"Preguntas de todas las unidades, nota al final"}</span></span></button>
+  <button class="card" ${P.missed.length?"":"disabled"} onclick="startReview()"><span class="cnum">↺</span><span class="txt"><b>Repasar mis errores</b><span class="muted small">${P.missed.length?P.missed.length+" ejercicios pendientes":"Todavía no tenés errores guardados"}</span></span></button>
+  <p class="muted small">Tu progreso se guarda en este dispositivo. <button class="lnk" onclick="logout()">Cambiar de usuario</button></p>
+  </aside><div class="path">${path}</div></div>` }
+function logout(){ls.set("o2o:me",null);me=null;go("login")}
+/* ---------- sesión de lección ---------- */
+function openTip(id){ const l=LESSONS.find(x=>x.id===id); S={mode:"lesson",lesson:l}; view="tip"; render() }
+function vTip(){ const l=S.lesson;
+  app.innerHTML=`<div class="lhead"><button class="x" aria-label="Salir" onclick="go('home')">✕</button><span class="muted small">Lección ${l.id}</span></div>
+  <h2 style="font-size:24px;margin-bottom:6px">${esc(l.title)}</h2><p class="muted" style="margin-top:0">${esc(l.topic)}</p><div class="tipcard">${l.tip}</div>`;
+  showFoot("",`<button class="btn red" onclick="startLesson()">Empezar lección</button>`) }
+function startLesson(){ const l=S.lesson; begin("lesson",shuffle(l.items).map(i=>i.key),l.id) }
+function startReview(){ if(!P.missed.length)return go("home"); begin("review",shuffle(P.missed).slice(0,15)) }
+function startExam(){ const saved=ls.get("o2o:exam:"+me);
+  if(saved&&saved.idx<saved.queue.length){ S={...saved,mode:"exam"}; S.hearts=null; view="q"; render(); return }
+  // 100 preguntas: reparto por lección, con al menos 1 de hablar por lección
+  const perL=Math.floor(100/LESSONS.length); let q=[];
+  for(const l of LESSONS){ const sp=shuffle(l.items.filter(i=>i.t==="speak")), rest=shuffle(l.items.filter(i=>i.t!=="speak")); q.push(sp[0].key,...rest.slice(0,perL-1).map(i=>i.key)) }
+  const left=shuffle(LESSONS.flatMap(l=>l.items).filter(i=>!q.includes(i.key))); q.push(...left.slice(0,100-q.length).map(i=>i.key));
+  begin("exam",shuffle(q)) }
+function begin(mode,queue,lessonId){ S={mode,queue,idx:0,lessonId,hearts:mode==="exam"?null:5,mistakes:0,first:{},results:[],xp:0,retry:false}; if(mode==="exam")ls.set("o2o:exam:"+me,S); view="q"; render() }
+function cur(){return ITEM[S.queue[S.idx]]}
+let resp=null;
+function vQ(){
+  const it=cur(), total=S.queue.length; resp=null;
+  const pct=S.idx/total*100;
+  let h=`<div class="lhead"><button class="x" aria-label="Salir" onclick="quit()">✕</button><div class="bar"><i style="width:${pct}%"></i></div>${S.hearts!=null?`<span class="hearts" aria-label="${S.hearts} vidas">♥ ${S.hearts}</span>`:`<span class="muted small" style="font-variant-numeric:tabular-nums">${S.idx+1}/${total}</span>`}</div>
+  <div class="qtype">${TYPE[it.t]}${S.mode!=="lesson"?` · ${it.lesson}`:""}${S.retry?" · volvé a intentarlo":""}</div>`;
+  const q=it.t==="fill"?esc(it.q).replace("___",'<span class="blank">&nbsp;</span>'):esc(it.q);
+  h+=`<div class="qtext">${q}</div>`;
+  if(it.t==="listen")h+=`<div class="say"><button class="spk" aria-label="Escuchar" onclick="speak(cur().say)">🔊</button><button class="spk slow" aria-label="Escuchar lento" onclick="speak(cur().say,.6)">lento</button></div>`;
+  if(it.t==="speak"&&it.say)h+=`<div class="say"><button class="spk" aria-label="Escuchar pregunta" onclick="speak(cur().say)">🔊</button><span class="saytxt">“${esc(it.say)}”</span></div>`;
+  if(it.t==="mc"){ const opts=shuffle(it.opts); h+=`<div class="opts">`+opts.map(o=>`<button class="opt" aria-pressed="false" data-o="${esc(o)}">${esc(o)}</button>`).join("")+`</div>` }
+  else if(it.t==="order"){ const words=it.a.replace(/[.?!,]/g,"").split(" "); h+=`<div class="tiles" id="tiles" aria-label="Tu respuesta"></div><div class="bank">`+shuffle(words.map((w,i)=>({w,i}))).map(o=>`<button class="tl" data-i="${o.i}">${esc(o.w)}</button>`).join("")+`</div>` }
+  else { h+=`<input class="ans" id="ans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${it.t==="fill"?"Palabra que falta":it.t==="speak"?"Hablá o escribí tu respuesta":"Escribí en inglés"}">`;
+    if(it.t==="speak")h+=`<div class="mic">${micBlocked?"":`<button class="btn" id="micb" style="flex:1">🎤 Tocá y hablá</button>`}</div><p class="hint">${micBlocked?DICT:"Si el micrófono no anda, usá el dictado del teclado en el campo de arriba."}</p>` }
+  app.innerHTML=h;
+  showFoot("",`<button class="btn" id="chk" disabled onclick="check()">Comprobar</button>`);
+  const chk=$("#chk"), set=v=>{resp=v;chk.disabled=!(v&&String(v).trim())};
+  if(it.t==="mc")app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{app.querySelectorAll(".opt").forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");set(b.dataset.o)});
+  else if(it.t==="order"){ const tiles=$("#tiles"), words=it.a.replace(/[.?!,]/g,"").split(" "), seq=[];
+    const upd=()=>{tiles.innerHTML=seq.map((i,k)=>`<button class="tl" data-k="${k}">${esc(words[i])}</button>`).join("");tiles.querySelectorAll(".tl").forEach(b=>b.onclick=()=>{const i=seq.splice(+b.dataset.k,1)[0];app.querySelector(`.bank .tl[data-i="${i}"]`).classList.remove("used");upd()});set(seq.length===words.length?seq.map(i=>words[i]).join(" "):"")};
+    app.querySelectorAll(".bank .tl").forEach(b=>b.onclick=()=>{if(b.classList.contains("used"))return;b.classList.add("used");seq.push(+b.dataset.i);upd()}) }
+  else { const a=$("#ans"); a.oninput=()=>set(a.value); a.onkeydown=e=>{if(e.key==="Enter"&&chk.isConnected&&!chk.disabled)check()}; if(it.t!=="speak")setTimeout(()=>a.focus(),50);
+    const mb=$("#micb"); if(mb)mb.onclick=()=>{ mb.classList.add("on");mb.textContent="Escuchando…";
+      const ok=listen(alts=>{const best=alts.find(t=>grade(it,t)!=="bad")||alts[0];a.value=best;set(best)},st=>{mb.classList.remove("on");mb.textContent="🎤 Tocá y hablá";if(st==="blocked"){mb.remove();$(".hint").innerHTML=DICT}});
+      if(!ok){mb.remove()} } }
+  if(it.t==="mc")document.onkeydown=e=>{if(!$("#chk"))return;const b=app.querySelectorAll(".opt")[e.key-1];if(b)b.click()};
+  window.scrollTo(0,0);
+  if(it.t==="listen"||(it.t==="speak"&&it.say))speak(it.say);
+}
+function showFoot(cls,html){foot.className="foot "+cls;footin.innerHTML=html;foot.hidden=false;requestAnimationFrame(()=>{app.style.paddingBottom=foot.offsetHeight+16+"px"});if(cls)footin.querySelector(".btn")?.focus({preventScroll:true})}
+function check(){
+  const it=cur(), g=grade(it,resp), firstTry=!S.retry;
+  if(S.mode==="exam"){ S.results.push({key:it.key,resp,ok:g!=="bad"}); S.idx++; ls.set("o2o:exam:"+me,S);
+    if(S.idx>=S.queue.length)return finishExam(); return render() }
+  if(g!=="bad"){
+    if(firstTry){S.xp+=10;if(!S.first[it.key])P.missed=P.missed.filter(k=>k!==it.key)} else S.xp+=3;
+    const note=g==="typo"?`<p>Casi perfecto, revisá la ortografía: <b>${esc(correctText(it))}</b></p>`:(it.t==="speak"||it.t==="translate")&&correctText(it)?`<p class="small">Modelo: <i>${esc(correctText(it))}</i></p>`:"";
+    showFoot("ok",`<div class="fb"><h3>${["¡Excelente!","¡Muy bien!","¡Correcto!","Great job!"][Math.random()*4|0]}</h3>${note}</div><button class="btn" onclick="nextQ()">Continuar</button>`);
+    if(["order","translate","speak"].includes(it.t)&&correctText(it))speak(correctText(it));
+  } else {
+    if(firstTry){ S.first[it.key]=1; S.mistakes++; if(S.hearts!=null)S.hearts--; if(!P.missed.includes(it.key))P.missed.push(it.key); S.queue.push(it.key) }
+    const ct=correctText(it);
+    showFoot("bad",`<div class="fb"><h3>No es correcto</h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p></div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`);
+    if(ct)speak(ct,.9);
+  }
+  save();
+}
+function retryQ(){ if(S.hearts===0){view="end";S.failed=true;return render()} S.retry=true; vQ() }
+function nextQ(){ S.retry=false; S.idx++; if(S.idx>=S.queue.length){view="end";return render()} vQ() }
+function quit(){ if(S.mode==="exam"){go("home");return} if($("#qc"))return;
+  [...footin.children].forEach(c=>c.hidden=true);
+  footin.insertAdjacentHTML("beforeend",`<div id="qc" style="display:grid;gap:10px"><p style="margin:0">¿Salir de la lección? Vas a perder el avance de esta lección.</p><button class="btn red" onclick="go('home')">Salir</button><button class="btn ghost" onclick="$('#qc').remove();[...footin.children].forEach(c=>c.hidden=false)">Seguir practicando</button></div>`) }
+function vEnd(){
+  if(S.failed){ save(); app.innerHTML=`<div class="result"><div class="big">♥ 0</div><h2>Te quedaste sin vidas</h2><p class="muted">Los errores quedaron guardados en "Repasar mis errores". Volvé a leer el tip y repetí la lección.</p></div>`;
+    showFoot("",`<button class="btn red" onclick="${S.mode==="lesson"?`openTip('${S.lessonId}')`:"startReview()"}">Repetir</button><button class="btn ghost" onclick="go('home')">Volver al inicio</button>`); return }
+  const st=S.mistakes===0?3:S.mistakes<=2?2:1; S.xp+=st*5; P.xp+=S.xp;
+  if(S.mode==="lesson")P.done[S.lessonId]=Math.max(P.done[S.lessonId]||0,st); save();
+  const nextL=S.mode==="lesson"?LESSONS[LESSONS.findIndex(l=>l.id===S.lessonId)+1]:null;
+  app.innerHTML=`<div class="result"><div class="stars" style="font-size:44px">${stars(st)}</div><h2>${S.mode==="lesson"?"¡Lección "+S.lessonId+" completa!":"¡Repaso completo!"}</h2>
+  <div class="big">+${S.xp} XP</div><p class="muted">${S.mistakes?`Te equivocaste ${S.mistakes} ${S.mistakes===1?"vez":"veces"}. Esos ejercicios quedaron en "Repasar mis errores".`:"Sin errores. ¡Perfecto!"}</p></div>`;
+  showFoot("",(nextL?`<button class="btn red" onclick="openTip('${nextL.id}')">Siguiente: ${nextL.id}</button>`:"")+(S.mode==="lesson"||P.missed.length?`<button class="btn ghost" onclick="${S.mode==="lesson"?`openTip('${S.lessonId}')`:"startReview()"}">Repetir</button>`:"")+`<button class="btn ghost" onclick="go('home')">Inicio</button>`) }
+function finishExam(){ const ok=S.results.filter(r=>r.ok).length, pct=Math.round(ok/S.results.length*100);
+  S.results.filter(r=>!r.ok).forEach(r=>{if(!P.missed.includes(r.key))P.missed.push(r.key)});
+  P.exam.tries++; P.exam.last=pct; P.exam.best=Math.max(P.exam.best??0,pct); P.xp+=ok; save(); ls.set("o2o:exam:"+me,null); view="examEnd"; render() }
+function vExamEnd(){
+  const bad=S.results.filter(r=>!r.ok), ok=S.results.length-bad.length, pct=Math.round(ok/S.results.length*100);
+  const weak={}; bad.forEach(r=>{const l=ITEM[r.key].lesson;weak[l]=(weak[l]||0)+1});
+  const wk=Object.entries(weak).sort((a,b)=>b[1]-a[1]);
+  app.innerHTML=`<div class="result"><p class="muted" style="margin:0">Simulacro de examen</p><div class="big">${pct}%</div><h2>${ok} de ${S.results.length} correctas</h2>
+  <p class="muted">${pct>=85?"¡Listo para el examen!":pct>=70?"Muy bien. Repasá los temas marcados.":"Repasá los temas marcados y volvé a intentarlo."}</p>
+  ${wk.length?`<div><p class="small muted" style="margin:0 0 6px">Temas para repasar (errores)</p>${wk.map(([l,n])=>`<span class="wkpill">${l} · ${esc(LESSONS.find(x=>x.id===l).title)} (${n})</span>`).join("")}</div>`:""}
+  ${bad.length?`<h3 style="text-align:left;margin-top:10px">Tus errores</h3><div class="review">${bad.map(r=>{const it=ITEM[r.key],ct=correctText(it);return `<div><span class="small muted">${it.lesson} · ${TYPE[it.t]}</span><br><b>${esc(it.q)}</b>${it.say&&it.t==="speak"?`<br><i>“${esc(it.say)}”</i>`:""}<br><span style="color:var(--bad)">Tu respuesta: ${esc(r.resp||"—")}</span>${ct?`<br><span style="color:var(--ok)">Correcta: ${esc(ct)}</span>`:""}<br><span class="small">${it.expl}</span></div>`}).join("")}</div>`:""}</div>`;
+  showFoot("",`${bad.length?`<button class="btn red" onclick="startReview()">Repasar mis errores</button>`:""}<button class="btn ghost" onclick="startExam()">Repetir simulacro</button><button class="btn ghost" onclick="go('home')">Inicio</button>`) }
+
+/* ---------- arranque ---------- */
+me=ls.get("o2o:me"); if(me){P=ls.get("o2o:p:"+me);if(P){P=merge(P,blank(P.name));view="home"}else me=null}
+render();
+
+// autochequeo de la corrección
+console.assert(grade({t:"fill",a:["isnt","is not"]},"isn't")==="ok","fill contraction");
+console.assert(grade({t:"speak",a:[/^(i am |im )from [a-z ]+/]},"I'm from Paraguay.")==="ok","speak regex");
+console.assert(grade({t:"speak",a:[/^i (usually )?get up at [a-z0-9: ]+/]},"I get up at 6:30")==="ok","times");
+console.assert(grade({t:"order",a:"What is your name?"},"What is your name")==="ok","order");
+console.assert(grade({t:"mc",opts:["a","b"]},"b")==="bad","mc");
+console.assert(grade({t:"translate",a:["my father does not work"]},"My father doesnt works")==="bad","no typo pass for -s");
+console.assert(grade({t:"translate",a:["i am a manager"]},"I am a manajer")==="typo","real typo");
+console.assert(norm("It's a quarter past nine")==="it is a quarter past nine","norm");
+console.assert(norm("It's sam@gmail.com")==="it is sam at gmail dot com","email");
+console.assert(norm("0981 234")==="zero nine eight one two hundred thirty four","phone digits");
+console.assert(norm("at 10 p.m.")==="at ten pm","pm");
+</script>
+</body></html>
