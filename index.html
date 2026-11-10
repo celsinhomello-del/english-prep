@@ -238,7 +238,7 @@ const UNITS = [
   O("Ordená la pregunta","How do you spell your name?"),
   L("It's zero nine eight one, two three four.","Teléfono: zero nine eight one, two three four.",[/^(it is )?((zero|oh) nine eight one|nine hundred eighty one) (two three four|two hundred thirty four)$/]),
   L("B-R-O-W-N","Deletreo: B-R-O-W-N.",["brown"]),
-  SP("Deletreá la palabra BOOK letra por letra.",null,["b o o k","bo ok","book"],"B-O-O-K."),
+  SP("Deletreá la palabra BOOK letra por letra.",null,["B-O-O-K","b o o k","bo ok","book"],"B-O-O-K."),
   SP("Respondé deletreando.","How do you spell your last name?",[/^([a-z] ){2,}[a-z]$/,/^(it is )?[a-z]+$/],"Letra por letra: <i>M-E-L-L-O.</i>"),
   T("Traducí: ¿Cuál es tu apellido?",["what is your last name","what is your surname","what is your family name"],"<i>What's your last name?</i> (EE.UU.)"),
   SP("Respondé la pregunta.","Are you a student?",[/^(yes i am|no i am not|no i am (a|an) [a-z]+)\b/],"<i>Yes, I am.</i> o <i>No, I'm not.</i>"),
@@ -256,8 +256,8 @@ const UNITS = [
   O("Ordená la pregunta","What is your email address?"),
   O("Ordená la pregunta","How are you today?"),
   L("It's sam at gmail dot com.","<i>sam at gmail dot com</i> = sam@gmail.com",[/^(it is )?sam at gmail (dot )?com$/]),
-  SP("Respondé.","How are you today?",[/^(i am )?(fine|great|ok|okay|good|very well|not bad)\b/],"<i>I'm fine, thanks. And you?</i>"),
-  SP("Decí este email en voz alta: ana@gmail.com",null,[/^ann?a at gmail (dot )?com$/],"<i>ana at gmail dot com</i>"),
+  SP("Respondé.","How are you today?",[/^(i am )?(fine|great|ok|okay|good|very good|very well|pretty good|well|so so|not bad)\b/],"<i>I'm fine, thanks. And you?</i>"),
+  SP("Decí este email en voz alta: ana@gmail.com",null,[/^(it is )?ann?a at gmail (dot )?com$/],"<i>ana at gmail dot com</i>"),
   T("Traducí: ¿Cuál es tu correo electrónico?",["what is your email address","what is your email","what is your e mail address","what is your e mail"],"<i>What's your email address?</i>"),
   ]},
 { id:"2.1", unit:2, title:"Are you a student?", topic:"Países, nacionalidades, I am / you are, números 13–20",
@@ -269,7 +269,7 @@ const UNITS = [
   M("15 en inglés:",["fifteen","fiveteen","fifty"],"15 = <b>fifteen</b>; 50 = fifty."),
   M("Plural de 'country':",["countries","countrys","countryes"],"Consonante + y → <b>-ies</b>."),
   F("You ___ a student. (afirmativo)",["are","re"],"you + <b>are</b>."),
-  F("She's from Mexico. She's ___.",["mexican"],"Mexico → <b>Mexican</b>."),
+  F("She's from Mexico. She's ___.",["Mexican"],"Mexico → <b>Mexican</b>."),
   O("Ordená la frase","I am not a teacher."),
   O("Ordená la pregunta","Are you a student?"),
   L("thirteen, fourteen, eighteen","13, 14, 18: thirteen, fourteen, eighteen."),
@@ -289,7 +289,7 @@ const UNITS = [
   O("Ordená la pregunta","Who is your favorite actor?"),
   O("Ordená la frase","She is not my teacher."),
   L("He's great. She isn't boring.","<i>He's great. She isn't boring.</i>"),
-  SP("Respondé con cualquier actor.","Who's your favorite actor?",[/^(my favou?rite (actor|actress) is|it is|he is|she is|i like) [a-z]+/,/^(?!(i|yes|no|it|my|he|she)\b)[a-z]+ [a-z]+$/,/^[a-z]+ [a-z]+ is my favou?rite (actor|actress)$/],"<i>My favorite actor is…</i>"),
+  SP("Respondé con cualquier actor.","Who's your favorite actor?",[/^(my favou?rite (actor|actress) is|it is|he is|she is|i like) [a-z]+/,/^(?!(i|yes|no|it|my|he|she)\b)[a-z]+( [a-z]+){0,3}$/,/^[a-z]+ [a-z]+ is my favou?rite (actor|actress)$/],"<i>My favorite actor is…</i>"),
   SP("Decí: 'Es fantástico.' (una cosa)",null,["it is fantastic"],"<i>It's fantastic.</i>"),
   T("Traducí: Ella no es aburrida.",["she is not boring","she isnt boring"],"<i>She isn't boring.</i>"),
   ]},
@@ -310,7 +310,7 @@ const UNITS = [
   L("My son is thirteen and my father is sixty.","13 vs 30, 16 vs 60: en -teen el acento va al final."),
   SP("Respondé (con cualquier edad).","How old are you?",[new RegExp("^(i am )?(?:(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)(?: (?:one|two|three|four|five|six|seven|eight|nine))?|(?:thir|four|fif|six|seven|eigh|nine)teen|ten|eleven|twelve|(?:a|one) hundred)( years old)?$")],"<i>I'm … years old.</i> ❌ I have … years."),
   SP("Decí el número 68.",null,["sixty eight","68"],"68 = sixty-eight."),
-  T("Traducí: ¿Ella es de España? — No.",["is she from spain no she is not","is she from spain no she isnt","is she from spain no"],"<i>Is she from Spain? — No, she isn't.</i>"),
+  T("Traducí: ¿Ella es de España? — No.",["Is she from Spain? No, she isn't.","is she from spain no she is not","is she from spain no she isnt","is she from spain no"],"<i>Is she from Spain? — No, she isn't.</i>"),
   ]},
 { id:"2.4", unit:2, title:"Where are your two favorite places?", topic:"You / we / they are, adjetivos",
   tip:`<b>You / We / They are:</b> We're friends. They're from Chile.<br><b>Negativo:</b> We aren't / They aren't.<br><b>Pregunta:</b> <i>Are they nice? — Yes, they are. / No, they aren't.</i><br><b>Adjetivo antes del sustantivo y sin plural:</b> <i>beautiful beaches</i> ❌ beautifuls beaches.<br>Adjetivos: beautiful, big, small, old, new, cheap, expensive, hot, cold, crowded, quiet.`,
@@ -342,7 +342,7 @@ const UNITS = [
   O("Ordená la pregunta","How old is her brother?"),
   L("English is important for my job.","<i>English is important for my job.</i>"),
   SP("Respondé.","Is English essential for your future?",[/^(yes|no|yeah|of course)\b/],"<i>Yes, it is.</i> / <i>Yes, it's very important.</i>"),
-  SP("Contá de un amigo: nombre Tom, 20 años.",null,[/^(his name is|he is|this is( my friend)?|my friends? name is) tom\b.*\btwenty( years old)?$/],"<i>His name is Tom. He's twenty.</i>"),
+  SP("Contá de un amigo: nombre Tom, 20 años.",null,[/^(his name is|he is|this is( my friend)?|my friends? name is) tom\b.*\btwenty\b/],"<i>His name is Tom. He's twenty.</i>"),
   T("Traducí: Su nombre (de ella) es Ana.",["her name is ana","her names ana"],"<i>Her name is Ana.</i>"),
   ]},
 { id:"3.1", unit:3, title:"What do you do?", topic:"Trabajos, sufijos, a/an + trabajo, plurales",
@@ -359,7 +359,7 @@ const UNITS = [
   O("Ordená la pregunta","What do you do?"),
   O("Ordená la frase","They are doctors."),
   L("I'm a nurse. He's an actor.","<i>I'm a nurse. He's an actor.</i>"),
-  SP("Respondé con un trabajo (con a/an).","What do you do?",[/^i am (a [b-df-hj-np-tv-z]|an [aeiou])[a-z ]*/],"<i>I'm a/an …</i> (¡no olvides el artículo!)"),
+  SP("Respondé con un trabajo (con a/an).","What do you do?",[/^i am (a (?!unemployed)([b-df-hj-np-tv-z]|u|eu)|an (?!unemployed)([aeiou]|hour|honest))[a-z ]*/],"<i>I'm a/an …</i> (¡no olvides el artículo!)"),
   SP("Decí: 'Ella es dentista.'",null,["she is a dentist"],"<i>She's a dentist.</i>"),
   T("Traducí: Soy gerente.",["i am a manager"],"<i>I'm a manager.</i> (con artículo)"),
   ]},
@@ -378,7 +378,7 @@ const UNITS = [
   O("Ordená la pregunta","Do you have brothers and sisters?"),
   O("Ordená la frase","I do not have a brother."),
   L("I have two sisters and one brother.","<i>I have two sisters and one brother.</i>"),
-  SP("Respondé.","Do you have brothers and sisters?",[/^(yes|no|yeah)\b/],"<i>Yes, I do. I have…</i> / <i>No, I don't.</i>"),
+  SP("Respondé.","Do you have brothers and sisters?",[/^(yes|no|yeah|i have|i do not have)\b/],"<i>Yes, I do. I have…</i> / <i>No, I don't.</i>"),
   SP("Decí: 'Ellos son mis padres.'",null,["they are my parents"],"<i>They're my parents.</i>"),
   T("Traducí: No tengo hijos.",["i do not have children",/^i (do not have (any )?(children|kids)|have no (children|kids))$/],"<i>I don't have children/kids.</i>"),
   ]},
@@ -390,11 +390,11 @@ const UNITS = [
   M("Completá: I work ___ home.",["at","in","on"],"<b>at</b> home."),
   M("Completá: She's a teacher. She works in a ___.",["school","store","bank"],"teacher → school."),
   F("___ you have a job? — No, I don't.",["do"],"<b>Do</b> you…?"),
-  F("I work ___ an office.",["in"],"<b>in</b> an office."),
+  F("I work ___ an office.",["in","at"],"<b>in</b> an office."),
   O("Ordená la pregunta","Where do you work?"),
   O("Ordená la frase","I work in a bank."),
   L("Do you work in a restaurant?","<i>Do you work in a restaurant?</i>"),
-  SP("Respondé.","Where do you work?",[/^i work (in|at|for|from) [a-z ]+/],"<i>I work in/at …</i>"),
+  SP("Respondé.","Where do you work?",[/^i work (in|at|for|from) [a-z ]+/,/^i work downtown/],"<i>I work in/at …</i>"),
   SP("Preguntá: '¿Tenés trabajo?'",null,["do you have a job","do you work"],"<i>Do you have a job?</i>"),
   T("Traducí: Trabajo en una fábrica.",["i work in a factory","i work at a factory"],"<i>I work in a factory.</i>"),
   ]},
@@ -477,7 +477,7 @@ const EXTRA={
  FIX("From where are you?","Where are you from?",[],"<i>from</i> va al final: Where are you <b>from</b>?"),
  FIX("I from Spain.","I'm from Spain.",["i am spanish"],"Falta el verbo: I<b>'m</b> from Spain."),
  M("Saludás a un amigo que ya conocés:",["Good to see you!","Nice to meet you!","Nice to see me!"],"<i>Good to see you</i> = ya se conocen. <i>Nice to meet you</i> = primera vez."),
- DLG("d12","¿Cómo quiere que la llamen?",["Lu","Lucía","Ana"],"<i>Please call me Lu.</i>"),
+ DLG("d12","¿Cómo quiere Lucía que la llamen?",["Lu","Lucía","Ana"],"<i>Please call me Lu.</i>"),
  DLG("d12","¿De dónde es Lucía?",["Curitiba, Brazil","Santiago, Chile","Lima, Peru"],"<i>I'm from Curitiba, in Brazil.</i>"),
  DLG("d12","¿De dónde es Tom?",["Santiago, Chile","Curitiba, Brazil","Bogotá, Colombia"],"<i>I'm from Santiago, in Chile.</i>"),
 ],
@@ -492,7 +492,7 @@ const EXTRA={
  FIX("Is an apple.","It's an apple.",["this is an apple"],"Falta el sujeto: <b>It's</b> an apple."),
  FIX("No, is a pen.","No, it's a pen.",[],"Falta el sujeto: No, <b>it's</b> a pen."),
  FIX("I no know.","I don't know.",[],"Negativo: I <b>don't</b> know."),
- FIX("How is this in English?","What's this in English?",[],"Se pregunta con <b>What</b>: What's this in English?"),
+ FIX("How is this in English?","What's this in English?",["how do you say this in english"],"Se pregunta con <b>What</b>: What's this in English?"),
  M("No entendés lo que dijo el profesor:",["I don't understand.","I don't know.","I don't think so."],"<i>I don't understand</i> = no entiendo. <i>I don't know</i> = no sé."),
  M("Para preguntar cómo se dice algo:",["How do you say 'escritorio' in English?","What do you say 'escritorio' in English?","How you say 'escritorio' in English?"],"<i>How do you say … in English?</i>"),
  M("'Whose is it?' significa:",["¿De quién es?","¿Qué es?","¿Quién es?"],"<i>Whose</i> = de quién. <i>Who</i> = quién."),
@@ -500,7 +500,7 @@ const EXTRA={
  DLG("d13","¿Qué es el segundo objeto?",["an eraser","a notebook","a flash drive"],"<i>Ah, it's an eraser.</i>"),
 ],
 "1.4":[
- M("En un teléfono, 66 se dice:",["double six","sixty-six","six and six"],"En teléfonos: 66 = <b>double six</b>, 0 = <b>oh</b>."),
+ M("En un teléfono, 66 se dice:",["double six","sixty-six","six and six"],"En teléfonos: 66 = <b>double six</b> (en EE.UU. también <i>six six</i>), 0 = <b>oh</b>."),
  M("En un teléfono, 007 se dice:",["double oh seven","oh seven","double seven"],"0 = <b>oh</b>, 00 = <b>double oh</b>."),
  M("Las letras LL de 'Mello' se dicen:",["double L","two L","L double"],"<b>LL = double L</b>."),
  M("La sigla BBC se dice:",["B-B-C","double B-C","B-C"],"En siglas se dice cada letra: <b>B-B-C</b> (no double B)."),
@@ -511,7 +511,7 @@ const EXTRA={
  M("'When is your birthday?' — It's on November ___. (3)",["third","three","tree"],"Fechas con ordinales: 1 <b>first</b>, 2 <b>second</b>, 3 <b>third</b>."),
  M("¿Cuál es el ordinal de 'two'?",["second","twoth","secund"],"1st first · 2nd <b>second</b> · 3rd third."),
  L("Seven, eight, one, five, oh, two, double nine.","Teléfono: 7815 0299 = seven eight one five, oh two, double nine.",[/^seven eight one five (oh|zero) two (double nine|nine nine)$/]),
- SP("Decí la sigla ATM en voz alta.",null,["a t m","atm"],"<i>A-T-M</i> (/ei-ti-em/)."),
+ SP("Decí la sigla ATM en voz alta.",null,["A-T-M","a t m","atm"],"<i>A-T-M</i> (/ei-ti-em/)."),
  DLG("d14","¿Cuál es su apellido?",["Reyes","Ruiz","Reis"],"<i>R-E-Y-E-S.</i>"),
  DLG("d14","¿Cuál es su número?",["781 55 302","781 35 302","718 55 320"],"<i>seven eight one, double five, three oh two</i> = 781 55 302."),
 ],
@@ -525,8 +525,8 @@ const EXTRA={
  F("See you ___ 7 p.m.",["at"],"Hora o lugar → <b>at</b>: See you at 7 p.m. / at the gym."),
  M("¿Cuál es una despedida?",["Have a nice day!","Nice to meet you!","How's it going?"],"<i>Have a nice day!</i> = ¡Que tengas un buen día!"),
  M("'I'm off!' significa:",["¡Me voy!","¡Estoy apagado!","¡Estoy libre!"],"<i>I'm off</i> = me voy (despedida)."),
- M("'How are you?' — 'So-so.' significa:",["Más o menos","Muy bien","Muy mal"],"<i>so-so / kind of</i> = más o menos."),
- SP("Decí este email en voz alta: ana_lopez@mail.com",null,[/^ana (underscore )?lopez at mail (dot )?com$/],"<i>ana underscore lopez at mail dot com</i>"),
+ M("'How are you?' — 'So-so.' significa:",["Más o menos","Muy bien","Muy mal"],"<i>so-so</i> = más o menos."),
+ SP("Decí este email en voz alta: ana_lopez@mail.com",null,[/^(it is )?ana (underscore )?lopez at mail (dot )?com$/],"<i>ana underscore lopez at mail dot com</i>"),
  DLG("d15","¿Cuál es el email de Carla?",["carla.diaz@gmail.com","carla_diaz@gmail.com","carla-diaz@gmail.com"],"<i>carla <b>dot</b> diaz at gmail dot com</i>."),
  DLG("d15","¿Cuándo se vuelven a ver?",["El lunes","Mañana","A las 7"],"<i>See you on Monday!</i>"),
 ],
@@ -542,12 +542,12 @@ const EXTRA={
  PIC("flag:pe",NAT,["Peruvian","Peruan","Peruish"],"Peru → <b>Peruvian</b>."),
  FIX("I'm from Mexican.","I'm Mexican.",["i am from mexico"],"<i>from</i> + país (Mexico); sin <i>from</i> + nacionalidad (Mexican)."),
  FIX("I'm from American.","I'm American.",["i am from the us","i am from the usa","i am from the u s","i am from the united states"],"<i>I'm American</i> o <i>I'm from the U.S.</i>"),
- F("Sung Lee is from China. He's ___.",["chinese"],"China → <b>Chinese</b>."),
+ F("Sung Lee is from China. He's ___.",["Chinese"],"China → <b>Chinese</b>."),
  F("Are you Spanish? — Yes, I ___.",["am"],"<i>Yes, I am.</i>"),
  M("16 en inglés:",["sixteen","sixty","sixten"],"16 = <b>sixteen</b>; 60 = sixty."),
  M("19 en inglés:",["nineteen","ninety","ninteen"],"19 = <b>nineteen</b>; 90 = ninety."),
  L("seventeen, sixteen, nineteen","17, 16, 19: seventeen, sixteen, nineteen."),
- SP("Decí: 'Ella es canadiense.'",null,["she is canadian"],"<i>She's Canadian.</i>"),
+ SP("Decí: 'Ella es canadiense.'",null,["She is Canadian.","she is canadian"],"<i>She's Canadian.</i>"),
  DLG("d21","¿De dónde es Sung Lee?",["China","Japan","Argentina"],"<i>I'm Chinese.</i>"),
  DLG("d21","¿Qué hace Paola?",["Es estudiante","Es profesora","Es escritora"],"<i>No, I'm not. I'm a student.</i>"),
  DLG("d21","¿Qué edad tiene Kenji?",["15","50","16"],"<i>He's fifteen.</i>"),
@@ -574,7 +574,7 @@ const EXTRA={
  PIC("flag:gb",NAT,["British","Britain","Australian"],"the UK → <b>British</b>."),
  PIC("flag:co",NAT,["Colombian","Colombish","Colombia"],"Colombia → <b>Colombian</b>."),
  M("El año 1998 se dice:",["nineteen ninety-eight","nineteen nine eight","one nine ninety-eight"],"Los años se dicen en dos partes: 19 | 98 = <b>nineteen ninety-eight</b>."),
- M("El año 2018 se dice:",["twenty eighteen","two eighteen","twenty-one eight"],"20 | 18 = <b>twenty eighteen</b>."),
+ M("El año 2018 se dice:",["twenty eighteen","two eighteen","twenty-one eight"],"20 | 18 = <b>twenty eighteen</b> (también se oye <i>two thousand eighteen</i>)."),
  F("24 + 10 = thirty-___",["four"],"34 = <b>thirty-four</b> (con guion)."),
  M("¿Cómo se escribe 43?",["forty-three","fourty-three","fourteen-three"],"Del 21 al 99 van con guion: <b>forty-three</b> (forty sin u)."),
  FIX("I have 19 years.","I'm 19.",["i am nineteen years old","i am 19 years old"],"Edad con <b>be</b>: I'm 19 (years old)."),
@@ -594,7 +594,7 @@ const EXTRA={
  M("Opuesto de 'big':",["small","cheap","ugly"],"big ↔ <b>small</b>."),
  M("Opuesto de 'beautiful':",["ugly","cold","unhappy"],"beautiful ↔ <b>ugly</b>."),
  PIC("🥶","¿Qué adjetivo corresponde?",["cold","hot","old"],"🥶 = <b>cold</b> (frío)."),
- PIC("🥵","¿Qué adjetivo corresponde?",["hot","cold","new"],"🥵 = <b>hot</b> (calor)."),
+ PIC("🥵","¿Qué adjetivo corresponde?",["hot","cold","new"],"🥵 = <b>hot</b> (caluroso / con calor)."),
  PIC("😃","¿Qué adjetivo corresponde?",["happy","unhappy","ugly"],"😃 = <b>happy</b>."),
  FIX("The tacos are delicious?","Are the tacos delicious?",[],"En preguntas, el verbo va primero: <b>Are</b> the tacos delicious?"),
  FIX("The hotels are cheaps.","The hotels are cheap.",[],"Los adjetivos <b>no</b> tienen plural."),
@@ -609,7 +609,7 @@ const EXTRA={
  FIX("I need the English for my job.","I need English for my job.",["i need english for work"],"Sin <i>the</i> con idiomas: <b>I need English</b> for my job."),
  M("No sabés la respuesta:",["I don't know. No idea.","I no know.","I not know."],"<i>I don't know. No idea.</i>"),
  M("'He's around 38' significa:",["Tiene unos 38 años","Tiene exactamente 38","Vive en la calle 38"],"<i>around</i> = alrededor de, unos."),
- M("Estado civil de alguien sin pareja:",["single","married","divorced"],"<b>single</b> = soltero/a."),
+ M("Estado civil de alguien que nunca se casó:",["single","married","divorced"],"<b>single</b> = soltero/a."),
  M("Ryan Gosling is from London, Ontario. He's ___.",["Canadian","British","American"],"Ontario está en Canadá: <b>Canadian</b>."),
  M("'Is she married?' — No estás seguro:",["I don't think so.","I don't know so.","I think not so."],"<i>I don't think so</i> = creo que no."),
  F("How ___ are they? — They're 14 and 19.",["old"],"<i>How old are they?</i>"),
@@ -621,7 +621,7 @@ const EXTRA={
 "3.1":[
  PIC("👨‍⚕️","What does he do?",["He's a doctor.","He's a lawyer.","He's a server."],"<b>a doctor</b>."),
  PIC("👮","What's this job?",["a police officer","a taxi driver","a teacher"],"<b>a police officer</b>."),
- PIC("💇","What's this job?",["a hairdresser","a doctor","an engineer"],"<b>a hairdresser</b> (peluquero/a)."),
+ PIC("💇✂️","What's this job?",["a hairdresser","a doctor","an engineer"],"<b>a hairdresser</b> (peluquero/a)."),
  PIC("👩‍🏫","What does she do?",["She's a teacher.","She's a writer.","She's a server."],"<b>a teacher</b>."),
  PIC("🧑‍💻","What's this job?",["an IT professional","a hairdresser","a sales clerk"],"<b>an IT professional</b> (an: I suena /ai/)."),
  PIC("🚖","What's this job?",["a taxi driver","a police officer","a banker"],"<b>a taxi driver</b>."),
@@ -663,7 +663,7 @@ const EXTRA={
  FIX("I work in the downtown.","I work downtown.",[],"<b>downtown</b> va sin <i>in the</i>."),
  FIX("I work in home.","I work at home.",["i work from home"],"<b>at home</b>."),
  FIX("Where you work?","Where do you work?",[],"Falta el auxiliar: Where <b>do</b> you work?"),
- FIX("She's not here. She's in school.","She's not here. She's at school.",["she is not here she is at school"],"<b>at school</b>."),
+ FIX("She's not here. She's on work.","She's not here. She's at work.",["she is not here she is at work"],"<b>at work</b> / <b>at home</b> / <b>at school</b>."),
  M("A pharmacist works in a ___.",["drugstore","factory","travel agency"],"farmacia = <b>drugstore</b>."),
  M("A travel agent works in a ___.",["travel agency","hospital","bank"],"<b>travel agency</b> = agencia de viajes."),
  M("A freelancer often works ___.",["at home","in home","on home"],"<b>at home</b>."),
@@ -832,15 +832,15 @@ function vLogin(){
   <input class="ans" id="nm" autocomplete="given-name" placeholder="Tu nombre" maxlength="30" value="${esc(ls.get("o2o:last")||"")}"><button class="btn red">Empezar</button></form></div>`;
   $("#lf").onsubmit=e=>{e.preventDefault();login($("#nm").value)}; }
 function vHome(){
-  const done=Object.keys(P.done).length, next=LESSONS.find(l=>!P.done[l.id]);
+  const done=Object.keys(P.done).length, rd=(P.round||[]).length, next=LESSONS.find(l=>!(P.round||[]).includes(l.id));
   let path=""; let u=0; for(const l of LESSONS){ if(l.unit!==u){u=l.unit;const n=LESSONS.filter(x=>x.unit===u),d=n.filter(x=>P.done[x.id]).length;path+=`${u>1?"</div>":""}<div class="unit"><span class="un">${u}</span><div><h3>Unit ${u}</h3><span class="muted small">${d}/${n.length} lecciones</span></div></div><div class="ugrid">`}
     const d=P.done[l.id]; path+=`<button class="lesson ${d?"done":""} ${l===next?"next":""}" onclick="openTip('${l.id}')"><span class="num">${l.id}</span><span class="txt"><b>${esc(l.title)}</b><span class="muted small">${esc(l.topic)}</span></span>${d?`<span class="stars" aria-label="${d} estrellas">${stars(d)}</span>`:l===next?`<span class="go">Seguir</span>`:""}</button>` }
   path+="</div>";
   app.innerHTML=header()+`<div class="home"><aside class="side">
-  <section class="hero"><div class="stripes" aria-hidden="true"></div><span class="eyebrow">Plan de estudio · examen del miércoles</span><h2>${next?done+" de "+LESSONS.length+" lecciones":"¡Todas las lecciones listas!"}</h2>
-  <div class="bar"><i style="width:${done/LESSONS.length*100}%"></i></div>
-  <p class="small">${next?`Siguiente: <b>${next.id} · ${esc(next.title)}</b><br>Hacé las lecciones en orden y cerrá con el test de prueba.`:`Hacé el test de prueba de ${EXAM_N} preguntas y repasá tus errores.`}</p>
-  <button class="btn red" onclick="${next?`openTip('${next.id}')`:"startExam()"}">${next?"Continuar":"Hacer el test de prueba"}</button></section>
+  <section class="hero"><div class="stripes" aria-hidden="true"></div><span class="eyebrow">Plan de estudio · Ronda ${(P.rounds||0)+1}</span><h2>${next?rd+" de "+LESSONS.length+" lecciones":"¡Ronda completa!"}</h2>
+  <div class="bar"><i style="width:${rd/LESSONS.length*100}%"></i></div>
+  <p class="small">${next?`Siguiente: <b>${next.id} · ${esc(next.title)}</b><br>Hacé las lecciones en orden y cerrá con el test de prueba.`:`Hacé el test de prueba de ${EXAM_N} preguntas, o empezá otra ronda con preguntas nuevas.`}</p>
+  <button class="btn red" onclick="${next?`openTip('${next.id}')`:"startExam()"}">${next?"Continuar":"Hacer el test de prueba"}</button>${next?"":`<button class="btn ghost" style="margin-top:8px" onclick="newRound()">Otra ronda con preguntas nuevas</button>`}</section>
   <section class="score"><div><span class="eyebrow">Puntuación final</span><b class="sc">${P.exam.best!=null?P.exam.best+"%":"—"}</b><span class="muted small">${P.exam.best!=null?"mejor nota del test de prueba":"hacé el test de prueba para tener tu nota"}</span></div><div><span class="eyebrow">Experiencia</span><b class="sc">${P.xp}</b><span class="muted small">XP · ${done}/${LESSONS.length} lecciones</span></div></section>
   ${progressCard()}
   <button class="card" onclick="startExam()"><span class="cnum">${EXAM_N}</span><span class="txt"><b>Test de prueba</b><span class="muted small">${ls.get("o2o:exam:"+me)?`En curso: ${ls.get("o2o:exam:"+me).idx}/${ls.get("o2o:exam:"+me).queue.length} · tocá para continuar`:P.exam.best!=null?`Mejor nota: ${P.exam.best}% · ${P.exam.tries} ${P.exam.tries===1?"intento":"intentos"}`:"Preguntas de todas las unidades, nota al final"}</span></span></button>
@@ -869,17 +869,18 @@ function startLesson(){ const l=S.lesson, seen=new Set(P.lseen||[]);
   const mine=shuffle(l.items.filter(i=>P.missed.includes(i.key))).slice(0,2);
   let q=[...new Set([...mine,...shuffle(l.items.filter(i=>!seen.has(i.key))),...shuffle(l.items.filter(i=>seen.has(i.key)))])].slice(0,LESSON_N);
   if(!q.some(i=>i.t==="speak")){ const sp=shuffle(l.items.filter(i=>i.t==="speak"&&!seen.has(i.key)))[0]||shuffle(l.items.filter(i=>i.t==="speak"))[0]; if(sp)q[q.length-1]=sp }
-  const ks=q.map(i=>i.key); let ns=[...seen,...ks];
+  begin("lesson",shuffle(q.map(i=>i.key)),l.id) }
+function markSeen(l,ks){ let ns=[...(P.lseen||[]),...ks];
   if(l.items.every(i=>ns.includes(i.key)))ns=[...ns.filter(k=>ITEM[k].lesson!==l.id),...ks]; // ya vio todo: reinicia el registro de esta lección
-  P.lseen=[...new Set(ns)]; save(); begin("lesson",shuffle(ks),l.id) }
+  P.lseen=[...new Set(ns)] }
 function newRound(){ P.round=[]; P.rounds=(P.rounds||0)+1; save(); openTip(LESSONS[0].id) }
 function startReview(){ if(!P.missed.length)return go("home"); begin("review",shuffle(P.missed).slice(0,15)) }
 function startExam(){ const saved=ls.get("o2o:exam:"+me);
   if(saved&&saved.idx<saved.queue.length&&saved.queue.every(k=>ITEM[k])){ S={...saved,mode:"exam"}; S.hearts=null; view="q"; render(); return }
-  // EXAM_N preguntas: reparto parejo por lección, 1 de hablar por lección, priorizando las que no salieron en simulacros anteriores
+  // EXAM_N preguntas: reparto parejo por lección, 1 de hablar por lección, priorizando las que no salieron en tests de prueba anteriores
   const seen=new Set(P.examSeen||[]), fresh=a=>[...shuffle(a.filter(i=>!seen.has(i.key))),...shuffle(a.filter(i=>seen.has(i.key)))];
   const perL=Math.floor(EXAM_N/LESSONS.length); let q=[];
-  for(const l of LESSONS){ const sp=fresh(l.items.filter(i=>i.t==="speak")), rest=fresh(l.items.filter(i=>i.t!=="speak")); q.push(sp[0].key,...rest.slice(0,perL-1).map(i=>i.key)) }
+  for(const l of LESSONS){ const spU=shuffle(l.items.filter(i=>i.t==="speak"&&!seen.has(i.key))), sp=spU.length?[spU[0].key]:[], rest=fresh(l.items.filter(i=>i.t!=="speak")); q.push(...sp,...rest.slice(0,perL-sp.length).map(i=>i.key)) }
   const left=fresh(LESSONS.flatMap(l=>l.items).filter(i=>!q.includes(i.key))); q.push(...left.slice(0,EXAM_N-q.length).map(i=>i.key));
   // cuando ya no quedan suficientes sin ver, se reinicia el registro
   const all=LESSONS.flatMap(l=>l.items).length; P.examSeen=[...new Set([...(seen.size+EXAM_N>all?[]:seen),...q])]; save();
@@ -939,7 +940,7 @@ function check(){
     if(firstTry){ S.first[it.key]=1; S.mistakes++; if(S.hearts!=null){S.hearts--;const hh=$(".hearts");if(hh){hh.textContent="♥ "+S.hearts;hh.classList.remove("beat");void hh.offsetWidth;hh.classList.add("beat")}} if(!P.missed.includes(it.key))P.missed.push(it.key); S.queue.push(it.key) }
     const ct=correctText(it);
     showFoot("bad",`<div class="fb"><h3>No es correcto<span style="font-weight:600;white-space:nowrap"> · ${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p>${transcript(it)}</div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`);
-    if(ct&&!/[áéíóúñ¿¡]|\b(es|el|la|que|cree|muy|está|chicas|grandes)\b/i.test(ct))speak(ct,.9); // no leer en voz inglesa respuestas en español
+    if(ct&&!/[áéíóúñ¿¡]|\b(es|el|la|que|cree|muy|está|chicas|grandes|en|un|una|unos|su|con|sabe|soy|y|biblioteca|realidad|actualmente|futbolista)\b/i.test(ct))speak(ct,.9); // no leer en voz inglesa respuestas en español
   }
   save();
 }
@@ -952,7 +953,9 @@ function vEnd(){
   if(S.failed){ save(); app.innerHTML=`<div class="result"><div class="big">♥ 0</div><h2>Te quedaste sin vidas</h2><p class="muted">Los errores quedaron guardados en "Repasar mis errores". Volvé a leer el tip y repetí la lección.</p></div>`;
     showFoot("",`<button class="btn red" onclick="${S.mode==="lesson"?`openTip('${S.lessonId}')`:"startReview()"}">Repetir</button><button class="btn ghost" onclick="go('home')">Volver al inicio</button>`); return }
   const st=S.mistakes===0?3:S.mistakes<=2?2:1; S.xp+=st*5; P.xp+=S.xp;
-  if(S.mode==="lesson"){P.done[S.lessonId]=Math.max(P.done[S.lessonId]||0,st); P.round=[...new Set([...(P.round||[]),S.lessonId])]} save();
+  if(S.mode==="lesson"){P.done[S.lessonId]=Math.max(P.done[S.lessonId]||0,st); markSeen(LESSONS.find(x=>x.id===S.lessonId),[...new Set(S.queue)]);
+    if(LESSONS.every(l=>(P.round||[]).includes(l.id))){P.round=[];P.rounds=(P.rounds||0)+1} // ronda anterior ya completa: empieza otra
+    P.round=[...new Set([...(P.round||[]),S.lessonId])]} save();
   const roundDone=S.mode==="lesson"&&LESSONS.every(l=>P.round.includes(l.id));
   const nextL=S.mode==="lesson"?LESSONS[LESSONS.findIndex(l=>l.id===S.lessonId)+1]:null;
   app.innerHTML=`<div class="result"><div class="stars" style="font-size:44px">${stars(st)}</div><h2>${S.mode==="lesson"?"¡Lección "+S.lessonId+" completa!":"¡Repaso completo!"}</h2>
