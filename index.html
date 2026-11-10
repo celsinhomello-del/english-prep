@@ -767,6 +767,7 @@ let dlgT,ansT; function stopRec(){try{if(rec){const r=rec;rec=null;r.abort()}}ca
 function hush(){clearTimeout(dlgT);clearTimeout(ansT);stopRec();try{speechSynthesis.cancel()}catch(e){}}
 document.addEventListener("visibilitychange",()=>{if(document.hidden)hush()});
 addEventListener("pagehide",()=>hush());
+addEventListener("pointerdown",()=>{try{speechSynthesis.speak(new SpeechSynthesisUtterance(""))}catch(e){}},{once:true}); // iOS: habilita la voz con el primer toque
 let voice=null;
 // Android reporta el idioma como en_US, iOS/PC como en-US
 const DICT=/Android/i.test(navigator.userAgent)?"Tocá el campo y usá el <b>🎤 del teclado Gboard</b> para responder hablando.":/iPhone|iPad/i.test(navigator.userAgent)?"Tocá el campo y usá el <b>🎤 del teclado</b> del iPhone para responder hablando.":"Tocá el campo y usá el <b>dictado</b> para responder hablando. Mac: Fn dos veces · Windows: Windows + H.";
@@ -779,7 +780,8 @@ function playDialog(id,rate=0.92){ try{ stopRec();if(!voice)pickVoice();speechSy
   const pitch={A:1,B:.78,C:1.28}, idx={A:0,B:1,C:2};
   for(const [who,text] of DIALOGS[id].lines){ const u=new SpeechSynthesisUtterance(text); u.lang="en-US"; u.rate=rate; u.pitch=pitch[who]||1;
     const v=vs.length?vs[(idx[who]||0)%vs.length]:voice; if(v)u.voice=v; speechSynthesis.speak(u) } }catch(e){} }
-function transcript(it){ return it.dlg?`<details class="trx"><summary>Ver la conversación</summary>${DIALOGS[it.dlg].lines.map(([w,t])=>`<p><b>${w}:</b> ${esc(t)}</p>`).join("")}</details>`:"" }
+function showTrx(){requestAnimationFrame(()=>{const t=$(".trx");if(!t||foot.hidden)return;const d=t.querySelector("summary").getBoundingClientRect().bottom-foot.getBoundingClientRect().top+12;if(d>0)scrollBy({top:d,behavior:"smooth"})})}
+function transcript(it){ return it.dlg?`<details class="trx" ontoggle="showTrx()"><summary>Ver la conversación</summary>${DIALOGS[it.dlg].lines.map(([w,t])=>`<p><b>${w}:</b> ${esc(t)}</p>`).join("")}</details>`:"" }
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 let micBlocked=!SR, rec=null;
 function listen(onText,onEnd){
@@ -956,13 +958,13 @@ function check(){ stopRec();
     sfx(bonus?"streak":"ok"); $("#qb")?.classList.add("pop");
     const note=g==="typo"?`<p>Casi perfecto, revisá la ortografía: <b>${esc(correctText(it))}</b></p>`:(it.t==="speak"||it.t==="translate"||it.t==="fix")&&correctText(it)?`<p class="small">Modelo: <i>${esc(correctText(it))}</i></p>`:"";
     {const sa=["speak","translate","fix"].includes(it.t)?spokenAnswer(it,resp,g):it.t==="order"||/___/.test(it.q)?answerAudio(it):null; S.ans=sa&&!isES(sa)?sa:null} // en "hablar" se repite lo que dijo el alumno
-    showFoot("ok",`<div class="fb"><h3>${PRAISE[Math.random()*PRAISE.length|0]}</h3>${streakTag}${note}${ansBtns()}</div><button class="btn" onclick="nextQ()">Continuar</button>`); if(it.dlg&&$("#qb"))$("#qb").insertAdjacentHTML("beforeend",transcript(it));
+    showFoot("ok",`<div class="fb"><h3>${PRAISE[Math.random()*PRAISE.length|0]}</h3>${streakTag}${note}${ansBtns()}</div><button class="btn" onclick="nextQ()">Continuar</button>`); if(it.dlg&&$("#qb")){$("#qb").insertAdjacentHTML("beforeend",transcript(it));showTrx()}
     if(S.ans&&!mute)ansT=setTimeout(()=>speak(S.ans),380);
   } else {
     sfx("bad"); S.streak=0; const qb=$("#qb"); if(qb){qb.classList.remove("shake");void qb.offsetWidth;qb.classList.add("shake")}
     if(firstTry){ S.first[it.key]=1; S.mistakes++; if(S.hearts!=null){S.hearts--;const hh=$(".hearts");if(hh){hh.textContent="♥ "+S.hearts;hh.classList.remove("beat");void hh.offsetWidth;hh.classList.add("beat")}} if(!P.missed.includes(it.key))P.missed.push(it.key); S.queue.push(it.key) }
-    const ct=correctText(it); {const sa=answerAudio(it); S.ans=sa&&!/[\/@]/.test(sa)&&!/'[^']+'/.test(sa)&&!isES(sa)?sa:null} // no leer en voz inglesa respuestas en español ni símbolos
-    showFoot("bad",`<div class="fb"><h3>No es correcto <span style="font-weight:600;white-space:nowrap">· ${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p>${ansBtns()}</div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`); if(it.dlg&&$("#qb"))$("#qb").insertAdjacentHTML("beforeend",transcript(it));
+    const ct=correctText(it); {const sa=answerAudio(it); S.ans=sa&&/@/.test(sa)&&!/\s/.test(sa)?sa.replace(/@/g," at ").replace(/\./g," dot ").replace(/_/g," underscore ").replace(/-/g," hyphen "):sa&&!/[\/@]/.test(sa)&&!/'[^']+'/.test(sa)&&!isES(sa)?sa:null} // no leer en voz inglesa respuestas en español ni símbolos
+    showFoot("bad",`<div class="fb"><h3>No es correcto <span style="font-weight:600;white-space:nowrap">· ${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p>${ansBtns()}</div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`); if(it.dlg&&$("#qb")){$("#qb").insertAdjacentHTML("beforeend",transcript(it));showTrx()}
     if(S.ans&&!mute)ansT=setTimeout(()=>speak(S.ans,.9),380);
   }
   save();
@@ -983,7 +985,7 @@ function vEnd(){ window.endAt=Date.now();
   const nextL=S.mode==="lesson"?LESSONS[LESSONS.findIndex(l=>l.id===S.lessonId)+1]:null;
   app.innerHTML=`<div class="result"><div class="stars" style="font-size:44px">${stars(st)}</div><h2>${S.mode==="lesson"?"¡Lección "+S.lessonId+" completa!":"¡Repaso completo!"}</h2>
   <div class="big" id="xpn" data-pre="+" data-suf=" XP">+0 XP</div>${S.best>=3?`<p style="margin:0"><span class="streak"><b>🔥</b> Mejor racha: ${S.best} seguidas</span></p>`:""}<p class="muted">${S.mistakes?`Te equivocaste ${S.mistakes} ${S.mistakes===1?"vez":"veces"}. Esos ejercicios quedaron en "Repasar mis errores".`:"Sin errores. ¡Perfecto!"}</p></div>`;
-  if(roundDone)app.querySelector(".result").insertAdjacentHTML("beforeend",`<div class="tipcard" style="text-align:center"><h2 style="margin:0 0 4px">🎉 ¡Ronda completa!</h2><p class="muted" style="margin:0">Hiciste las ${LESSONS.length} lecciones. ¿Te animás a un test de prueba como el examen, o preferís seguir practicando?</p></div>`);
+  if(roundDone)app.querySelector(".result").insertAdjacentHTML("afterbegin",`<div class="tipcard" style="text-align:center"><h2 style="margin:0 0 4px">🎉 ¡Ronda completa!</h2><p class="muted" style="margin:0">Hiciste las ${LESSONS.length} lecciones. ¿Te animás a un test de prueba como el examen, o preferís seguir practicando?</p></div>`);
   if(roundDone)showFoot("",`<button class="btn red" onclick="startExam()">Hacer el test de prueba (60 preguntas, 20–25 min)</button><button class="btn ghost" onclick="newRound()">Seguir practicando: otra ronda con preguntas nuevas</button><button class="btn ghost" onclick="go('home')">Inicio</button>`); else
   showFoot("",(nextL?`<button class="btn red" onclick="openTip('${nextL.id}')">Siguiente: ${nextL.id}</button>`:"")+(S.mode==="lesson"||P.missed.length?`<button class="btn ghost" onclick="${S.mode==="lesson"?`openTip('${S.lessonId}')`:"startReview()"}">Repetir</button>`:"")+`<button class="btn ghost" onclick="go('home')">Inicio</button>`);
   sfx("done"); confetti(); countUp($("#xpn"),S.xp) }
