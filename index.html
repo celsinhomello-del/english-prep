@@ -290,7 +290,7 @@ const UNITS = [
   O("Ordená la pregunta","Who is your favorite actor?"),
   O("Ordená la frase","She is not my teacher."),
   L("He's great. She isn't boring.","<i>He's great. She isn't boring.</i>"),
-  SP("Respondé con cualquier actor.","Who's your favorite actor?",[/^(my favou?rite (actor|actress) is|it is|he is|she is|i like) [a-z]+/,/^(?!(i|yes|no|it|my|he|she)\b)[a-z]+( [a-z]+){0,3}$/,/^[a-z]+ [a-z]+ is my favou?rite (actor|actress)$/],"<i>My favorite actor is…</i>"),
+  SP("Respondé con cualquier actor.","Who's your favorite actor?",[/^(my favou?rite (actor|actress) is|it is|he is|she is|i like) [a-z]+/,/^(?!(i|yes|no|it|my|he|she)\b)(?!.*\b(mi|es|el|la|favorito|favorita|no se)\b)[a-z]+( [a-z]+){0,3}$/,/^[a-z]+ [a-z]+ is my favou?rite (actor|actress)$/],"<i>My favorite actor is…</i>"),
   SP("Decí: 'Es fantástico.' (una cosa)",null,["it is fantastic"],"<i>It's fantastic.</i>"),
   T("Traducí: Ella no es aburrida.",["she is not boring","she isnt boring"],"<i>She isn't boring.</i>"),
   ]},
@@ -761,13 +761,15 @@ function correctText(it){
 }
 
 /* ---------- voz ---------- */
+const APOS={i:"I",im:"I'm",youre:"you're",hes:"he's",shes:"she's",its:"it's",theyre:"they're",whats:"what's",whos:"who's",wheres:"where's",thats:"that's",isnt:"isn't",arent:"aren't",dont:"don't",doesnt:"doesn't",cant:"can't"};
+function hush(){try{speechSynthesis.cancel()}catch(e){}}
 let voice=null;
 // Android reporta el idioma como en_US, iOS/PC como en-US
 const DICT=/Android/i.test(navigator.userAgent)?"Tocá el campo y usá el <b>🎤 del teclado Gboard</b> para responder hablando.":/iPhone|iPad/i.test(navigator.userAgent)?"Tocá el campo y usá el <b>🎤 del teclado</b> del iPhone para responder hablando.":"Tocá el campo y usá el <b>dictado</b> para responder hablando. Mac: Fn dos veces · Windows: Windows + H.";
 const NOVELTY=/albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|deranged|hysterical|junior|ralph|kathy|fred|eddy|flo|grand|reed|rocko|sandy|shelley/i; // voces de efectos de iOS/macOS
 function pickVoice(){const vs=speechSynthesis.getVoices().filter(v=>!NOVELTY.test(v.name));voice=vs.find(v=>/en[-_]US/i.test(v.lang)&&/samantha|google us|united states|aria|jenny|allison/i.test(v.name))||vs.find(v=>/en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null}
 if("speechSynthesis" in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
-function speak(text,rate=0.92){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang="en-US";if(voice)u.voice=voice;u.rate=rate;speechSynthesis.speak(u)}catch(e){}}
+function speak(text,rate=0.92){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(text).replace(/\s+[—–]\s+/g," "));u.lang="en-US";if(voice)u.voice=voice;u.rate=rate;speechSynthesis.speak(u)}catch(e){}}
 // conversaciones: cada persona con otra voz si el equipo tiene más de una; si no, cambia el tono
 function playDialog(id,rate=0.92){ try{ speechSynthesis.cancel(); let vs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)&&!NOVELTY.test(v.name)).sort((a,b)=>(/en[-_]US/i.test(b.lang))-(/en[-_]US/i.test(a.lang))); if(voice)vs=[voice,...vs.filter(v=>v!==voice)];
   const pitch={A:1,B:.78,C:1.28}, idx={A:0,B:1,C:2};
@@ -824,7 +826,7 @@ function login(name){ name=name.trim().replace(/\s+/g," ").slice(0,30); if(!name
 /* ---------- vistas ---------- */
 let view="login", S=null;
 function stars(n){return "★".repeat(n)+"☆".repeat(3-n)}
-function render(){ if(view!=="home"&&view!=="login"&&!history.state)try{history.pushState(1,"")}catch(e){} foot.hidden=true; app.style.paddingBottom=""; document.onkeydown=null; app.className="wrap "+(view==="home"?"wide":view==="login"?"":"mid"); ({login:vLogin,home:vHome,tip:vTip,q:vQ,end:vEnd,examEnd:vExamEnd}[view])(); window.scrollTo(0,0) }
+function render(){ hush(); if(view!=="home"&&view!=="login"&&!history.state)try{history.pushState(1,"")}catch(e){} foot.hidden=true; app.style.paddingBottom=""; document.onkeydown=null; app.className="wrap "+(view==="home"?"wide":view==="login"?"":"mid"); ({login:vLogin,home:vHome,tip:vTip,q:vQ,end:vEnd,examEnd:vExamEnd}[view])(); window.scrollTo(0,0) }
 function header(){ const done=Object.keys(P.done).length;
   return `<header class="top"><img src="${LOGO}" alt="One2One — You make it real"><div class="who"><span class="muted small">Hola,</span><br><b>${esc(P.name)}</b></div>
   <div class="stats">${sndBtn()}<span class="chip" title="Experiencia">⚡ ${P.xp} XP</span><span class="chip" title="Lecciones completas">✔ ${done}/${LESSONS.length}</span></div></header>` }
@@ -923,10 +925,19 @@ function vQ(){
   if(it.t==="mc"||it.t==="order")document.onkeydown=e=>{const c=$("#chk");if($("#qc")){if(e.key==="Escape")$("#qc .btn.ghost").click();return}if(!c){const fb=footin.querySelector(".btn");if(e.key==="Enter"&&fb&&document.activeElement!==fb){e.preventDefault();fb.click()}return}if(e.key==="Enter"&&!c.disabled){e.preventDefault();check()}else if(it.t==="mc"){const b=app.querySelectorAll(".opt")[e.key-1];if(b)b.click()}};
   window.scrollTo(0,0);
   if(it.t==="listen"||(it.t==="speak"&&it.say))speak(it.say);
-  if(it.dlg&&S.lastDlg!==it.dlg){S.lastDlg=it.dlg;setTimeout(()=>playDialog(it.dlg),300)}
+  if(it.dlg&&S.lastDlg!==it.dlg){S.lastDlg=it.dlg;setTimeout(()=>{if(view==="q"&&cur()===it)playDialog(it.dlg)},300)}
 }
 function showFoot(cls,html){foot.className="foot "+cls;footin.innerHTML=html;foot.hidden=false;requestAnimationFrame(()=>{app.style.paddingBottom=foot.offsetHeight+16+"px";const a=$("#ans");if(cls&&a&&document.activeElement===a){const d=a.getBoundingClientRect().bottom-foot.getBoundingClientRect().top+8;if(d>0)scrollBy(0,d)}});if(document.activeElement?.id!=="ans")footin.querySelector(".btn:not(:disabled)")?.focus({preventScroll:true})}
 const ES_RE=/[ñ¿¡]|(^|[^a-záéíóúñ])(es|el|la|los|las|que|cree|muy|está|chicas|grandes|soy|de|del|en|un|una|unos|su|con|y|sabe|mozo|más|menos|él|sí|tú|qué|cuál|biblioteca|realidad|actualmente|futbolista)(?![a-záéíóúñ])/i;
+const isES=t=>ES_RE.test(String(t).replace(/\b(?:[A-Z]-)+[A-Z]\b/g,"")); // R-E-Y-E-S no es "es"
+// lo que dijo/escribió el alumno, prolijo (o el modelo si coincide o fue un error de tipeo)
+function spokenAnswer(it,r,g){const ct=correctText(it);if(ct&&(g==="typo"||norm(ct).replace(/ /g,"")===norm(r).replace(/ /g,"")))return ct;return String(r).replace(/\b[a-z]+\b/gi,w=>APOS[w.toLowerCase()]||w)}
+// respuesta correcta para leer en voz: frase completa en completar, frase de la conversación en preguntas de audio
+function answerAudio(it){const ct=correctText(it);if(!ct)return null;
+  if(it.dlg){const ex=(it.expl||"").match(/<i>(.*?)<\/i>/);if(ex)return ex[1].replace(/<[^>]+>/g,"")}
+  if(/___/.test(it.q)){const s=it.q.replace(/^Complet[aá]:\s*/,"").replace(/\s*\([^)]*\)/g,"").replace("___",ct).trim();
+    return isES(s)||/[+=]/.test(s)?it.q.match(/\S*___\S*/)[0].replace("___",ct).replace(/[^\w'-]/g,""):s}
+  return ct}
 function ansBtns(){ return S.ans?`<div class="say"><button class="spk" aria-label="Escuchar la respuesta" onclick="speak(S.ans)">🔊</button><button class="spk slow" aria-label="Escuchar la respuesta lento" onclick="speak(S.ans,.6)">lento</button></div>`:"" }
 function check(){
   const it=cur(), g=grade(it,resp), firstTry=!S.retry;
@@ -939,13 +950,13 @@ function check(){
     const streakTag=firstTry&&st>=3?`<span class="streak"><b>🔥</b> ${st} seguidas${bonus?` · +${bonus} XP`:""}${st>=5?" · On fire!":""}</span>`:"";
     sfx(bonus?"streak":"ok"); $("#qb")?.classList.add("pop");
     const note=g==="typo"?`<p>Casi perfecto, revisá la ortografía: <b>${esc(correctText(it))}</b></p>`:(it.t==="speak"||it.t==="translate"||it.t==="fix")&&correctText(it)?`<p class="small">Modelo: <i>${esc(correctText(it))}</i></p>`:"";
-    S.ans=it.t==="speak"&&resp?resp:["order","translate","fix"].includes(it.t)?correctText(it):null; // en "hablar" se repite lo que dijo el alumno
+    {const sa=["speak","translate","fix"].includes(it.t)?spokenAnswer(it,resp,g):it.t==="order"||/___/.test(it.q)?answerAudio(it):null; S.ans=sa&&!isES(sa)?sa:null} // en "hablar" se repite lo que dijo el alumno
     showFoot("ok",`<div class="fb"><h3>${PRAISE[Math.random()*PRAISE.length|0]}</h3>${streakTag}${note}${ansBtns()}</div><button class="btn" onclick="nextQ()">Continuar</button>`); if(it.dlg&&$("#qb"))$("#qb").insertAdjacentHTML("beforeend",transcript(it));
     if(S.ans)speak(S.ans);
   } else {
     sfx("bad"); S.streak=0; const qb=$("#qb"); if(qb){qb.classList.remove("shake");void qb.offsetWidth;qb.classList.add("shake")}
     if(firstTry){ S.first[it.key]=1; S.mistakes++; if(S.hearts!=null){S.hearts--;const hh=$(".hearts");if(hh){hh.textContent="♥ "+S.hearts;hh.classList.remove("beat");void hh.offsetWidth;hh.classList.add("beat")}} if(!P.missed.includes(it.key))P.missed.push(it.key); S.queue.push(it.key) }
-    const ct=correctText(it); S.ans=ct&&!/[\/@]/.test(ct)&&!ES_RE.test(ct)?ct:null; // no leer en voz inglesa respuestas en español ni símbolos
+    const ct=correctText(it); {const sa=answerAudio(it); S.ans=sa&&!/[\/@]/.test(sa)&&!isES(sa)?sa:null} // no leer en voz inglesa respuestas en español ni símbolos
     showFoot("bad",`<div class="fb"><h3>No es correcto <span style="font-weight:600;white-space:nowrap">· ${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p>${ansBtns()}</div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`); if(it.dlg&&$("#qb"))$("#qb").insertAdjacentHTML("beforeend",transcript(it));
     if(S.ans)speak(S.ans,.9);
   }
