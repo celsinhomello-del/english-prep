@@ -771,16 +771,22 @@ addEventListener("pointerdown",()=>{try{speechSynthesis.speak(new SpeechSynthesi
 let voice=null;
 // Android reporta el idioma como en_US, iOS/PC como en-US
 const DICT=/Android/i.test(navigator.userAgent)?"Tocá el campo y usá el <b>🎤 del teclado Gboard</b> para responder hablando.":/iPhone|iPad/i.test(navigator.userAgent)?"Tocá el campo y usá el <b>🎤 del teclado</b> del iPhone para responder hablando.":"Tocá el campo y usá el <b>dictado</b> para responder hablando. Mac: Fn dos veces · Windows: Windows + H.";
-// Voces de efectos de macOS/iOS (también con nombres traducidos al español/portugués): nunca usarlas
-const NOVELTY=/albert|bad news|good news|noticias|notícias|bahh|bells|campanas|sinos|boing|bubbles|burbujas|bolhas|cellos|violonchel|violoncel|jester|buf[oó]n|bobo|organ|[oó]rgano|órgão|superstar|superestrella|trinoid|whisper|susurro|sussurro|wobble|zarvox|deranged|hysterical|princess|pipe|junior|ralph|kathy|fred|eddy|flo\b|grand|abuel|av[oó]|reed|rocko|sandy|shelley|agnes|bruce|vicki|novelty/i;
-// voces en inglés "normales" conocidas, por plataforma (iOS/macOS, Google/Android, Windows/Edge)
+// Voces de EFECTOS de macOS/iOS (cantan, campanas, órgano…): nunca usarlas. Los nombres pueden venir traducidos (es/pt) → también por identificador interno.
+const FX_NAME=/albert|bad news|good news|noticias|notícias|bahh|bells|campanas|sinos|boing|bubbles|burbujas|bolhas|cellos|violonchel|violoncel|jester|buf[oó]n|bobo da corte|organ|[oó]rgano|órgão|superstar|superestrella|trinoid|whisper|susurro|sussurro|wobble|zarvox|deranged|hysterical|histéric|princess|pipe/i;
+const FX_URI=/\.(albert|badnews|bahh|bells|boing|bubbles|cellos|deranged|goodnews|hysterical|jester|organ|pipeorgan|princess|superstar|trinoids|whisper|wobble|zarvox)$/i;
+const isFx=v=>FX_NAME.test(v.name)||FX_URI.test(v.voiceURI||"");
+// voces normales conocidas (iOS/macOS, Google/Android, Windows/Edge)
 const GOOD=/samantha|alex\b|daniel|karen|moira|tessa|fiona|allison|ava\b|susan|nicky|aaron|evan|nathan|noelle|zoe|serena|google us english|google uk english|microsoft (aria|jenny|guy|david|zira|mark|ana|christopher|eric|michelle|roger|steffan|libby|ryan|sonia|emma|brian|andrew)|english united states|english \(united states\)|en-us-x|en-gb-x/i;
-const enVoices=()=>speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)&&!NOVELTY.test(v.name));
-function pickVoice(){const vs=enVoices(), us=vs.filter(v=>/en[-_]US/i.test(v.lang));voice=us.find(v=>/samantha|google us|united states|aria|jenny|allison/i.test(v.name))||us.find(v=>GOOD.test(v.name))||us.find(v=>v.default)||us[0]||vs.find(v=>GOOD.test(v.name))||vs[0]||null}
+// voces "Eloquence" de Apple: hablan normal (algo robóticas); sirven si no hay otra mejor
+const ELOQ=/eddy|flo\b|reed|rocko|sandy|shelley|grandma|grandpa|abuel|av[oó]\b|eloquence/i;
+const OLD=/fred|kathy|ralph|junior/i; // voces viejas robóticas: último recurso
+const enVoices=()=>speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)&&!isFx(v));
+const rank=v=>(GOOD.test(v.name)?0:ELOQ.test(v.name)||/eloquence/i.test(v.voiceURI||"")?2:OLD.test(v.name)?3:1)*2+(/en[-_]US/i.test(v.lang)?0:1);
+function pickVoice(){const vs=enVoices().sort((a,b)=>rank(a)-rank(b)), us=vs.filter(v=>/en[-_]US/i.test(v.lang));voice=us.find(v=>/samantha|google us|united states|aria|jenny|allison/i.test(v.name))||vs[0]||null}
 if("speechSynthesis" in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
 function speak(text,rate=0.92){try{stopRec();if(!voice)pickVoice();speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(text).replace(/([?!.])\s*[—–]\s*/g,"$1 ").replace(/\s*[—–]\s*/g,". ").replace(/\.{3}|…/g,","));u.lang="en-US";if(voice)u.voice=voice;u.rate=rate;speechSynthesis.speak(u)}catch(e){}}
 // conversaciones: cada persona con otra voz si el equipo tiene más de una; si no, cambia el tono
-function playDialog(id,rate=0.92){ try{ stopRec();if(!voice)pickVoice();speechSynthesis.cancel(); let vs=enVoices().filter(v=>GOOD.test(v.name)&&v!==voice).sort((a,b)=>(/en[-_]US/i.test(b.lang))-(/en[-_]US/i.test(a.lang))); vs=[voice,...vs].filter(Boolean); // otros hablantes: solo voces conocidas; si no hay, la misma voz con otro tono
+function playDialog(id,rate=0.92){ try{ stopRec();if(!voice)pickVoice();speechSynthesis.cancel(); let vs=enVoices().filter(v=>v!==voice&&rank(v)<6).sort((a,b)=>rank(a)-rank(b)); vs=[voice,...vs].filter(Boolean); // otros hablantes: voces normales; si no hay, la misma voz con otro tono
   const pitch={A:1,B:.78,C:1.28}, idx={A:0,B:1,C:2};
   for(const [who,text] of DIALOGS[id].lines){ const u=new SpeechSynthesisUtterance(text); u.lang="en-US"; u.rate=rate; u.pitch=pitch[who]||1;
     const v=vs.length?vs[(idx[who]||0)%vs.length]:voice; if(v)u.voice=v; speechSynthesis.speak(u) } }catch(e){} }
@@ -852,7 +858,8 @@ function vHome(){
   let path=""; let u=0; for(const l of LESSONS){ if(l.unit!==u){u=l.unit;const n=LESSONS.filter(x=>x.unit===u),d=n.filter(x=>P.done[x.id]).length;path+=`${u>1?"</div>":""}<div class="unit"><span class="un">${u}</span><div><h3>Unit ${u}</h3><span class="muted small">${d}/${n.length} lecciones</span></div></div><div class="ugrid">`}
     const d=P.done[l.id]; path+=`<button class="lesson ${d?"done":""} ${l===next?"next":""}" onclick="openTip('${l.id}')"><span class="num">${l.id}</span><span class="txt"><b>${esc(l.title)}</b><span class="muted small">${esc(l.topic)}</span></span>${d?`<span class="stars" aria-label="${d} estrellas">${stars(d)}</span>`:l===next?`<span class="go">Seguir</span>`:""}</button>` }
   path+="</div>";
-  app.innerHTML=header()+`<div class="home"><aside class="side">
+  const noVoice="speechSynthesis" in window&&speechSynthesis.getVoices().length&&!voice; // sin voz en inglés normal en este aparato
+  app.innerHTML=header()+`<div class="home"><aside class="side">${noVoice?`<section class="tipcard" role="alert"><b>🔈 Tu aparato no tiene una voz en inglés.</b><p class="small" style="margin:6px 0 0">Para escuchar bien los audios, agregá una voz en inglés (EE.&nbsp;UU.): en iPhone o Mac, Ajustes › Accesibilidad › Contenido leído › Voces › English. En Android, Ajustes › Texto a voz › Google › instalar inglés.</p></section>`:""}
   <section class="hero"><div class="stripes" aria-hidden="true"></div><span class="eyebrow">Plan de estudio · Ronda ${(P.rounds||0)+1}</span><h2>${next?rd+" de "+LESSONS.length+" lecciones":"¡Ronda completa!"}</h2>
   <div class="bar"><i style="width:${rd/LESSONS.length*100}%"></i></div>
   <p class="small">${next?`Siguiente: <b>${next.id} · ${esc(next.title)}</b><br>Hacé las lecciones en orden y cerrá con el test de prueba.`:`Hacé el test de prueba de ${EXAM_N} preguntas, o empezá otra ronda con preguntas nuevas.`}</p>
