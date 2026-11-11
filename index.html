@@ -772,13 +772,13 @@ let voice=null;
 // Android reporta el idioma como en_US, iOS/PC como en-US
 const DICT=/Android/i.test(navigator.userAgent)?"Tocá el campo y usá el <b>🎤 del teclado Gboard</b> para responder hablando.":/iPhone|iPad/i.test(navigator.userAgent)?"Tocá el campo y usá el <b>🎤 del teclado</b> del iPhone para responder hablando.":"Tocá el campo y usá el <b>dictado</b> para responder hablando. Mac: Fn dos veces · Windows: Windows + H.";
 // Voces de EFECTOS de macOS/iOS (cantan, campanas, órgano…): nunca usarlas. Los nombres pueden venir traducidos (es/pt) → también por identificador interno.
-const FX_NAME=/albert|bad news|good news|noticias|notícias|bahh|bells|campanas|sinos|boing|bubbles|burbujas|bolhas|cellos|violonchel|violoncel|jester|buf[oó]n|bobo da corte|organ|[oó]rgano|órgão|superstar|superestrella|trinoid|whisper|susurro|sussurro|wobble|zarvox|deranged|hysterical|histéric|princess|pipe/i;
+const FX_NAME=/albert|bad news|good news|noticias|notícias|bahh|bells|campanas|sinos|boing|bubbles|burbujas|bolhas|cellos|violonchel|violoncel|jester|buf[oóã]|bobo\b|organ|[oó]rgano|órgão|superstar|superestrel|trin[oó]id|whisper|susurro|sussurro|wobble|zarvox|deranged|hysterical|histéric|princess|pipe/i;
 const FX_URI=/\.(albert|badnews|bahh|bells|boing|bubbles|cellos|deranged|goodnews|hysterical|jester|organ|pipeorgan|princess|superstar|trinoids|whisper|wobble|zarvox)$/i;
 const isFx=v=>FX_NAME.test(v.name)||FX_URI.test(v.voiceURI||"");
 // voces normales conocidas (iOS/macOS, Google/Android, Windows/Edge)
-const GOOD=/samantha|alex\b|daniel|karen|moira|tessa|fiona|allison|ava\b|susan|nicky|aaron|evan|nathan|noelle|zoe|serena|google us english|google uk english|microsoft (aria|jenny|guy|david|zira|mark|ana|christopher|eric|michelle|roger|steffan|libby|ryan|sonia|emma|brian|andrew)|english united states|english \(united states\)|en-us-x|en-gb-x/i;
+const GOOD=/samantha|alex\b|daniel|karen|moira|tessa|fiona|allison|ava\b|susan|nicky|aaron|evan|nathan|noelle|zoe|serena|tom\b|joelle|kate\b|stephanie|jamie|oliver|matilda|lee\b|isha\b|sangeeta|veena|rishi|aman\b|tara\b|arthur|martha|catherine|gordon|google us english|google uk english|microsoft (aria|jenny|guy|david|zira|mark|ana|christopher|eric|michelle|roger|steffan|libby|ryan|sonia|emma|brian|andrew)|english united states|english \(united states\)|en-us-x|en-gb-x/i;
 // voces "Eloquence" de Apple: hablan normal (algo robóticas); sirven si no hay otra mejor
-const ELOQ=/eddy|flo\b|reed|rocko|sandy|shelley|grandma|grandpa|abuel|av[oó]\b|eloquence/i;
+const ELOQ=/eddy|flo\b|reed|rocko|sandy|shelley|grandma|grandpa|abuel|av[oóô]\s*\(|eloquence/i; // voces Eloquence de Apple: hablan normal (algo robóticas); sirven si no hay otra mejor
 const OLD=/fred|kathy|ralph|junior/i; // voces viejas robóticas: último recurso
 const enVoices=()=>speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)&&!isFx(v));
 const rank=v=>(GOOD.test(v.name)?0:ELOQ.test(v.name)||/eloquence/i.test(v.voiceURI||"")?2:OLD.test(v.name)?3:1)*2+(/en[-_]US/i.test(v.lang)?0:1);
@@ -868,7 +868,7 @@ function vHome(){
   ${progressCard()}
   <button class="card" onclick="startExam()"><span class="cnum">${EXAM_N}</span><span class="txt"><b>Test de prueba</b><span class="muted small">${ls.get("o2o:exam:"+me)?`En curso: ${ls.get("o2o:exam:"+me).idx}/${ls.get("o2o:exam:"+me).queue.length} · tocá para continuar`:P.exam.best!=null?`Mejor nota: ${P.exam.best}% · ${P.exam.tries} ${P.exam.tries===1?"intento":"intentos"}`:"Preguntas de todas las unidades, nota al final"}</span></span></button>
   <button class="card" ${P.missed.length?"":"disabled"} onclick="startReview()"><span class="cnum">↺</span><span class="txt"><b>Repasar mis errores</b><span class="muted small">${P.missed.length?P.missed.length+" ejercicios pendientes":"Todavía no tenés errores guardados"}</span></span></button>
-  <p class="muted small">Banderas: Twemoji (CC-BY 4.0). Tu progreso se guarda en este dispositivo. <button class="lnk" onclick="logout()">Cambiar de usuario</button></p>
+  <p class="muted small">Banderas: Twemoji (CC-BY 4.0)${typeof voice!=="undefined"&&voice?` · Voz: ${esc(voice.name)}`:""}. Tu progreso se guarda en este dispositivo. <button class="lnk" onclick="logout()">Cambiar de usuario</button></p>
   </aside><div class="path">${path}</div></div>` }
 function progressCard(){
   const units=[...new Set(LESSONS.map(l=>l.unit))].map(u=>{const ls_=LESSONS.filter(l=>l.unit===u),st=ls_.reduce((a,l)=>a+(P.done[l.id]||0),0),d=ls_.filter(l=>P.done[l.id]).length;return{u,pct:Math.round(st/(ls_.length*3)*100),d,n:ls_.length}});
@@ -975,7 +975,7 @@ function check(){ stopRec();
     sfx("bad"); S.streak=0; const qb=$("#qb"); if(qb){qb.classList.remove("shake");void qb.offsetWidth;qb.classList.add("shake")}
     if(firstTry){ S.first[it.key]=1; S.mistakes++; if(S.hearts!=null){S.hearts--;const hh=$(".hearts");if(hh){hh.textContent="♥ "+S.hearts;hh.classList.remove("beat");void hh.offsetWidth;hh.classList.add("beat")}} if(!P.missed.includes(it.key))P.missed.push(it.key); S.queue.push(it.key) }
     const ct=correctText(it); {const sa=answerAudio(it); S.ans=sa&&/@/.test(sa)&&!/\s/.test(sa)?sa.replace(/@/g," at ").replace(/\./g," dot ").replace(/_/g," underscore ").replace(/-/g," hyphen "):sa&&!/[\/@]/.test(sa)&&!/(^|\s)'[^']+'(?=\s|[.,?!—]|$)/.test(sa)&&!isES(sa)?sa:null} // no leer en voz inglesa respuestas en español ni símbolos
-    showFoot("bad",`<div class="fb"><h3>No es correcto <span style="font-weight:600;white-space:nowrap">· ${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p>${ansBtns()}</div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>`); if(it.dlg&&$("#qb")){$("#qb").insertAdjacentHTML("beforeend",transcript(it));showTrx()}
+    showFoot("bad",`<div class="fb"><h3>No es correcto <span style="font-weight:600;white-space:nowrap">· ${CHEER[Math.random()*CHEER.length|0]}</span></h3>${ct?`<p>Respuesta correcta: <b>${esc(ct)}</b></p>`:""}<p class="small">${it.expl}</p>${ansBtns()}</div><button class="btn" onclick="retryQ()">${S.hearts===0?"Ver resultado":"Intentar de nuevo"}</button>${it.t==="speak"&&S.hearts>0?`<button class="btn ghost" onclick="nextQ()">Saltar · vuelve al final</button>`:""}`); if(it.dlg&&$("#qb")){$("#qb").insertAdjacentHTML("beforeend",transcript(it));showTrx()}
     if(S.ans&&!mute)ansT=setTimeout(()=>speak(S.ans,.9),380);
   }
   save();
